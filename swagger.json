@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "version": "1.0",
+    "version": "1.0.0",
     "title": "Power-Pulse_Api",
     "description": "Power-Pulse_API swagger documentation",
     "license": {
@@ -10,7 +10,7 @@
     }
   },
   "consumes": ["application/json", "multipart/form-data"],
-  "produces": ["application/json"],
+  "produces": ["application/json", "multipart/form-data"],
   "servers": [
     { "url": "http://localhost:3000" },
     { "url": "https://powerpulse-171j.onrender.com" }
@@ -72,18 +72,59 @@
           }
         }
       }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User registration",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Registration's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "409": {
+            "description": "Provided email already exists",
+            "content": {}
+          }
+        }
+      }
     }
   },
+
   "components": {
     "schemas": {
-      "RegistrationRequest": {
+      "Registration request": {
         "type": "object",
         "required": ["email", "password"],
         "properties": {
           "email": {
             "type": "string",
             "description": "User's email",
-            "format": "email"
+            "format": "email",
+            "example": "exampleEmail@mail.com"
           },
           "password": {
             "type": "string",
@@ -92,7 +133,7 @@
           }
         }
       },
-      "RegistrationResponse": {
+      "Registration response": {
         "type": "array",
         "items": {
           "type": "object",
