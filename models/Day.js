@@ -1,11 +1,21 @@
 import mongoose from 'mongoose';
-import { handleSaveError, runValidatorsAtUpdate } from './mongooseUtils';
 
-const Day = new mongoose.Schema({
-    products: {
-        type
+import Exercise from "./Exercise.js"
+
+const DaySchema = mongoose.Schema({
+    data: {
+        type: Date,
+        required: true,
+    },
+
+    exercise: {
+        type: Array,
+        required: false
     }
 })
+
+const Day = mongoose.model("day", DaySchema);
+export default Day;
 
 /*
 day{

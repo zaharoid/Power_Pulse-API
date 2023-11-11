@@ -4,6 +4,8 @@ import cors from "cors";
 
 import authRouter from "./routes/api/auth.js";
 
+import dairyRouter from "./routes/api/dairy.js";
+
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "./swagger.json" assert { type: "json" };
 import "dotenv/config";
@@ -25,6 +27,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/auth", authRouter);
 
 app.use("/api/exercises", exercisesRouter);
+
+app.use("/api/dairy", dairyRouter);
 
 
 app.use((req, res) => {
