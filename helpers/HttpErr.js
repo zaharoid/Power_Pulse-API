@@ -4,7 +4,7 @@ const errList = {
   403: "Firbidden",
   404: "Not found",
   409: "Conflict",
-};
+}
 
 const HttpErr = (status, message = errList[status]) => {
   const error = new Error(message);
