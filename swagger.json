@@ -35,7 +35,7 @@
   ],
   "paths": {
     "/auth/register": {
-      "post": {
+      "get": {
         "tags": ["Auth"],
         "summary": "User registration",
         "parameters": [],
@@ -111,6 +111,47 @@
           }
         }
       }
+    },
+    "/exercises": {
+      "get": {
+        "tags": ["Exercises"],
+        "summary": "List of exercises",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema":{
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Exercises"
+                }
+              }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/exercises/details": {
+      "get": {
+        "tags": ["Exercises"],
+        "summary": "List of body parts, equipments and muscles",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema":{
+                  "$ref": "#/components/schemas/ExercisesDetails"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
 
@@ -154,6 +195,65 @@
           { "email": "1@gmail.com", "userId": "1" },
           { "email": "2@gmail.com", "userId": "2" }
         ]
+      },
+      "Exercises": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string"
+            },
+            "bodyPart": {
+              "type": "string"
+            },
+            "equipment": {
+              "type": "string"
+            },
+            "gifUrl": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "target": {
+              "type": "string"
+            },
+            "burnedCalories": {
+              "type": "number"
+            },
+            "time": {
+              "type": "number"
+            }
+          }
+      },
+      "ExercisesDetails": {
+          "type": "object",
+          "properties": {
+            "bodyParts": {
+              "type": "array",
+
+              "items":{
+                "type": "string",
+                "xml":{
+                "name": "bodyPart"}
+              }
+            },
+            "targets": {
+              "type": "array",
+              "items":{
+                "type": "string",
+                "xml":{
+                "name": "target"}
+              }
+            },
+            "equipments": {
+              "type": "array",
+              "items":{
+                "type": "string",
+                "xml":{
+                "name": "equipment"}
+              }
+            }
+          }
       }
     },
     "securitySchemes": {
