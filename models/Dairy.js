@@ -6,6 +6,8 @@ const Dairy = new mongoose.Schema({
         type: String, // ID владельца
         required: [true, "Diary without owner? Something wrong is going on here. Fix this and come back:)"],
         unique: true
-    }
-
+    },
+    data: {
+        tags: [Object]
+    }    
 })

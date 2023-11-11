@@ -7,6 +7,7 @@ const Day = new mongoose.Schema({
     }
 })
 
+/*
 day{
     data: data
     ex:{
@@ -26,3 +27,4 @@ day{
 
 rice = findOne( id: 2873462387468234 )
 allKcal = rice.weight * ( rice.kcal / 100 )
+*/
