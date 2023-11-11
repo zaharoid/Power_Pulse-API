@@ -133,6 +133,25 @@
           }
         }
       }
+    },
+    "/exercises/details": {
+      "get": {
+        "tags": ["Exercises"],
+        "summary": "List of body parts, equipments and muscles",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema":{
+                  "$ref": "#/components/schemas/ExercisesDetails"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
 
@@ -203,6 +222,36 @@
             },
             "time": {
               "type": "number"
+            }
+          }
+      },
+      "ExercisesDetails": {
+          "type": "object",
+          "properties": {
+            "bodyParts": {
+              "type": "array",
+
+              "items":{
+                "type": "string",
+                "xml":{
+                "name": "bodyPart"}
+              }
+            },
+            "targets": {
+              "type": "array",
+              "items":{
+                "type": "string",
+                "xml":{
+                "name": "target"}
+              }
+            },
+            "equipments": {
+              "type": "array",
+              "items":{
+                "type": "string",
+                "xml":{
+                "name": "equipment"}
+              }
             }
           }
       }
