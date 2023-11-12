@@ -4,7 +4,7 @@ import { ctrlWrapper } from "../decorators/index.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-dotenv.config;
+dotenv.config();
 const { JWT_SECRET } = process.env;
 
 const signup = async (req, res) => {
