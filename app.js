@@ -3,6 +3,7 @@ import logger from "morgan";
 import cors from "cors";
 
 import authRouter from "./routes/api/auth.js";
+import calcUserRouter from "./routes/api/calcUserRouter.js";
 
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "./swagger.json" assert { type: "json" };
@@ -23,6 +24,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
 app.use("/api/auth", authRouter);
+app.use("/api/calc", calcUserRouter);
 
 app.use("/api/exercises", exercisesRouter);
 
