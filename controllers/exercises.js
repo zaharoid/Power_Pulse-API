@@ -1,6 +1,6 @@
 import { HttpErr } from "../helpers/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
-import { Exercise } from "../models/Exercise.js";
+import Exercise from "../models/Exercise.js";
 
 const getAllExercises = async (req, res) => {
   const r = await Exercise.find({});

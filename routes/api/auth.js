@@ -15,8 +15,6 @@ const authRouter = express.Router();
 // authRouter.use(authenticate);
 authRouter.post(
   "/signup",
-  isEmptyBody,
-  userSignupValidate,
   authController.signup
 );
 authRouter.post(

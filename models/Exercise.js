@@ -1,5 +1,4 @@
 import { Schema, model } from "mongoose";
-import Joi from "joi";
 
 const exerciseSchema = new Schema({
   bodyPart: {
@@ -32,4 +31,5 @@ const exerciseSchema = new Schema({
   }
 }, { versionKey: false });
 
-export const Exercise = model("exercise", exerciseSchema);
+const Exercise = model("exercise", exerciseSchema);
+export default Exercise;
