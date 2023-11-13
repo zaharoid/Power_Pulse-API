@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import { HttpErr } from "../helpers/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
+import Dairy from "../models/Dairy.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -16,7 +17,7 @@ const signup = async (req, res) => {
   const hashPassword = await bcrypt.hash(password, 10);
 
   const newUser = await User.create({ ...req.body, password: hashPassword });
-  
+  await Dairy.create({ owner: newUser._id })
   
   res.status(201).json({
     name: newUser.name,

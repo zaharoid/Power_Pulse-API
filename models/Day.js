@@ -1,21 +1,17 @@
-import mongoose from 'mongoose';
+import Joi from "joi";
 
-import Exercise from "./Exercise.js"
+const daySchema = Joi.object({
+    date: Joi.date().required(),
+});
 
-const DaySchema = mongoose.Schema({
-    data: {
-        type: Date,
-        required: true,
-    },
-
-    exercise: {
-        type: Array,
-        required: false
-    }
+const dayInfoSchema = Joi.object({
+    doneExercises: Joi.array().allow(null),
+    eatedProducts: Joi.array().allow(null),
+    burnedCalories: Joi.number().allow(null).min(0),
+    sportTime: Joi.number().allow(null).min(0),
 })
 
-const Day = mongoose.model("day", DaySchema);
-export default Day;
+export { daySchema, dayInfoSchema };
 
 /*
 day{

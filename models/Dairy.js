@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 
-import Day from "./Day.js"
-
 const DairySchema = new mongoose.Schema({
     owner: {
         type: String, // ID владельца
@@ -9,7 +7,7 @@ const DairySchema = new mongoose.Schema({
         unique: true
     },
     data: {
-        type: Array
+        type: []
     }    
 })
 
