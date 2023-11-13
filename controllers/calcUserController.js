@@ -18,10 +18,11 @@ const add = async (req, res) => {
 }
 
 const calculateCalories = async (req, res) => {
-    console.log('params',req.userData)
+    const {_id: owner} = req.user;
     try {
-        const { height, currentWeight, desiredWeight, birthday, boold, sex, levelActivity} = req.user;
-        console.log('0000000', height, currentWeight, birthday, boold, sex, levelActivity )
+        const calculations = await MongusModel.find({owner});
+        const { height, currentWeight, desiredWeight, birthday, blood, sex, levelActivity} = calculations[0];
+        // console.log('0000000', height, currentWeight, birthday, blood, sex, levelActivity )
         const activityCoefficients = { 1: 1.2, 2: 1.375, 3: 1.55, 4: 1.725, 5: 1.9 };
         const activityCoefficient = activityCoefficients[levelActivity];
 
