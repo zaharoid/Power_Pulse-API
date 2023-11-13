@@ -18,7 +18,7 @@ const add = async (req, res) => {
 }
 
 const calculateCalories = async (req, res) => {
-    // console.log('params',req.params)
+    console.log('params',req.userData)
     try {
         const { height, currentWeight, desiredWeight, birthday, boold, sex, levelActivity} = req.user;
         console.log('0000000', height, currentWeight, birthday, boold, sex, levelActivity )
