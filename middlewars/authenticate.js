@@ -1,16 +1,23 @@
 import { HttpErr } from "../helpers/index.js";
+
 import { ctrlWrapper } from "../decorators/index.js";
+
 import User from "../models/User.js";
+
 import jwt from "jsonwebtoken"; 
+
 const { JWT_SECRET } = process.env;
 
 const authenticate = async (req, res, next) => {
+
   const { authorization } = req.headers;
+
   if (!authorization || !authorization.startsWith("Bearer ")) {
     return next(HttpErr(401, "Not authorized"));
   }
 
   const token = authorization.split(" ")[1];
+
   if (!token) {
     return next(HttpErr(401, "Not authorized"));
   }

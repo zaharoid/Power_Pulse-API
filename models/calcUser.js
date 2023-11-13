@@ -45,7 +45,7 @@ const calcUserSchema = new Schema({
   },
   owner: {
     type: Schema.Types.ObjectId,
-    ref: 'user', //Примітка: 'user' - назва колекції, у якій зберігаються користувачі
+    ref: 'user', 
     require: true,
   },
 });
@@ -63,7 +63,6 @@ export const userCalcSchema = Joi.object({
     currentWeight: Joi.number().min(35).required(),
     desiredWeight: Joi.number().min(35).required(),
     birthday: Joi.date().max('now').iso().required().custom((value, helpers) => {
-        // Власна перевірка для переконання, що користувач старше 18 років
         const age = new Date().getFullYear() - new Date(value).getFullYear();
         if (age < 18) {
             return helpers.message('Користувач повинен бути старше 18 років');
