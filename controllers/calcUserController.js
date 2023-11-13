@@ -43,12 +43,31 @@ const calculateCalories = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+const updateById = async (req, res, next) => {
+    try{
+        const { error } = userCalcSchema.validate(req.body);
+        if(error){
+            throw HttpErr(400, error.message);
+        }
+        const {calcId} = req.params;
+        const result = await MongusModel.findByIdAndUpdate(calcId, req.body);
 
+        if(!result){
+            throw HttpErr(400, "Not found");
+        }
+        res.json(result);
+    }catch(error){
+        next(error);
+        
+
+    }
+}
 
 export default {
     schow: ctrlWrapper(schow),
     add: ctrlWrapper(add),
     calculateCalories: ctrlWrapper(calculateCalories),
+    updateById: ctrlWrapper(updateById),
    
 }
 
