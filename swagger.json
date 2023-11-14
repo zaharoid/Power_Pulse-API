@@ -102,6 +102,29 @@
         }
       }
     },
+    "/products": {
+      "post": {
+        "tags": ["Products"],
+        "summary": "Get list of products categories",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductsResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categories of products not found"
+          }
+        }
+      }
+    },
     "/exercises": {
       "get": {
         "tags": ["Exercises"],
@@ -202,6 +225,13 @@
             "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
           }
         }
+      },
+      "ProductsResponse": {
+        "type": "array",
+        "items": {
+              "type": "string",
+              "example": "'cereals', 'dairy', 'dried fruits'"
+            }
       },
       "Exercises": {
         "type": "object",
