@@ -1,5 +1,5 @@
 import express from "express";
-import {authenticate, isEmptyBody,} from "../../middlewars/index.js";
+import {authenticate, isEmptyBody,} from "../../middlewares/index.js";
 import calcUserController from "../../controllers/calcUserController.js";
 
 

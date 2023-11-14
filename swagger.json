@@ -35,7 +35,7 @@
   ],
   "paths": {
     "/auth/register": {
-      "get": {
+      "post": {
         "tags": ["Auth"],
         "summary": "User registration",
         "parameters": [],
@@ -62,13 +62,8 @@
               }
             }
           },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
           "409": {
-            "description": "Provided email already exists",
-            "content": {}
+            "description": "Email already in use"
           }
         }
       }
@@ -101,13 +96,8 @@
               }
             }
           },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
-          "409": {
-            "description": "Provided email already exists",
-            "content": {}
+          "401": {
+            "description": "Email or password invalid"
           }
         }
       }
@@ -157,24 +147,28 @@
 
   "components": {
     "schemas": {
-      "Registration request": {
+      "RegistrationRequest": {
         "type": "object",
         "required": ["email", "password"],
         "properties": {
+          "name": {
+            "type": "string",
+            "example": "Username",
+            "description": "User's name"
+          },
           "email": {
             "type": "string",
             "description": "User's email",
-            "format": "email",
-            "example": "exampleEmail@mail.com"
+            "format": "email"
           },
           "password": {
             "type": "string",
-            "description": "User's password",
-            "example": "qwerty123"
+            "example": "userpassword",
+            "description": "User's password"
           }
         }
       },
-      "Registration response": {
+      "RegistrationResponse": {
         "type": "array",
         "items": {
           "type": "object",
@@ -184,17 +178,16 @@
               "description": "User's email",
               "format": "email"
             },
-            "userId": {
-              "type": "number",
-              "description": "User's id",
-              "example": "32143232436545474"
+            "name": {
+              "type": "string",
+              "description": "User's name"
             }
           }
         },
-        "example": [
-          { "email": "1@gmail.com", "userId": "1" },
-          { "email": "2@gmail.com", "userId": "2" }
-        ]
+        "example": {
+          "email": "user@example.com", 
+          "userId": "frr4df3sg4gsr2345f3fs2" 
+        }
       },
       "Exercises": {
           "type": "object",
@@ -230,7 +223,6 @@
           "properties": {
             "bodyParts": {
               "type": "array",
-
               "items":{
                 "type": "string",
                 "xml":{
