@@ -4,22 +4,26 @@ import dairyCtrl from "../../controllers/dairy.js";
 
 import { validateBody } from "../../decorators/index.js";
 
-import { daySchema } from "../../models/Day.js";
-import { dayInfoSchema } from "../../models/Day.js";
+import { daySchema, dayInfoSchema, dayStingSchema } from "../../models/Day.js";
+
+import authenticate from "../../middlewars/authenticate.js";
 
 const daySchemaValidate = validateBody(daySchema);
 const dayInfoSchemaValidate = validateBody(dayInfoSchema);
+const dayStringValidate = validateBody(dayStingSchema);
 
 const dairyRouter = express.Router();
 
-dairyRouter.post(
-    "/createDay",
-    daySchemaValidate,
-    dairyCtrl.createDay
-);
+dairyRouter.get(
+    "/getInfo",
+    authenticate,
+    dayStringValidate,
+    dairyCtrl.getInfo
+)
 
 dairyRouter.patch(
     "/inputInfo",
+    authenticate,
     dayInfoSchemaValidate,
     dairyCtrl.inputInfo
 )
