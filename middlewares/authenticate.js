@@ -4,11 +4,12 @@ import { ctrlWrapper } from "../decorators/index.js";
 
 import User from "../models/User.js";
 
-import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken"; 
 
 const { JWT_SECRET } = process.env;
 
 const authenticate = async (req, res, next) => {
+
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
