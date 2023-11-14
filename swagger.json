@@ -34,53 +34,14 @@
     }
   ],
   "paths": {
-    "/auth/register": {
-      "get": {
-        "tags": ["Auth"],
-        "summary": "User registration",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "Registration's object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
-          "409": {
-            "description": "Provided email already exists",
-            "content": {}
-          }
-        }
-      }
-    },
-    "/auth/login": {
+    "/auth/signup": {
       "post": {
         "tags": ["Auth"],
         "summary": "User registration",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Registration's object",
+          "description": "User registration object",
           "required": true,
           "content": {
             "application/json": {
@@ -101,13 +62,42 @@
               }
             }
           },
-          "400": {
-            "description": "Bad request (invalid request body)",
-            "content": {}
-          },
           "409": {
-            "description": "Provided email already exists",
-            "content": {}
+            "description": "Email already in use"
+          }
+        }
+      }
+    },
+    "/auth/singin": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Logs user into the system",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "User login object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Email or password invalid"
           }
         }
       }
@@ -122,12 +112,12 @@
             "description": "Successful operation",
             "content": {
               "application/json": {
-                "schema":{
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Exercises"
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Exercises"
+                  }
                 }
-              }
               }
             }
           }
@@ -144,7 +134,7 @@
             "description": "Successful operation",
             "content": {
               "application/json": {
-                "schema":{
+                "schema": {
                   "$ref": "#/components/schemas/ExercisesDetails"
                 }
               }
@@ -157,103 +147,124 @@
 
   "components": {
     "schemas": {
-      "Registration request": {
+      "RegistrationRequest": {
         "type": "object",
         "required": ["email", "password"],
         "properties": {
+          "name": {
+            "type": "string",
+            "example": "Username"
+          },
           "email": {
             "type": "string",
-            "description": "User's email",
             "format": "email",
             "example": "exampleEmail@mail.com"
           },
           "password": {
             "type": "string",
-            "description": "User's password",
-            "example": "qwerty123"
+            "example": "userPassword"
           }
         }
       },
-      "Registration response": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "email": {
-              "type": "string",
-              "description": "User's email",
-              "format": "email"
-            },
-            "userId": {
-              "type": "number",
-              "description": "User's id",
-              "example": "32143232436545474"
-            }
+      "RegistrationResponse": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "name": {
+            "type": "string",
+            "example": "Username"
           }
-        },
-        "example": [
-          { "email": "1@gmail.com", "userId": "1" },
-          { "email": "2@gmail.com", "userId": "2" }
-        ]
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "exampleEmail@mail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "userPassword"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          }
+        }
       },
       "Exercises": {
-          "type": "object",
-          "properties": {
-            "_id": {
-              "type": "string"
-            },
-            "bodyPart": {
-              "type": "string"
-            },
-            "equipment": {
-              "type": "string"
-            },
-            "gifUrl": {
-              "type": "string"
-            },
-            "name": {
-              "type": "string"
-            },
-            "target": {
-              "type": "string"
-            },
-            "burnedCalories": {
-              "type": "number"
-            },
-            "time": {
-              "type": "number"
-            }
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "655144fb56a08fda8eb06785"
+          },
+          "bodyPart": {
+            "type": "string",
+            "example": "upper legs"
+          },
+          "equipment": {
+            "type": "string",
+            "example": "assisted"
+          },
+          "gifUrl": {
+            "type": "string",
+            "example": "https://ftp.goit.study/img/power-pulse/gifs/0016.gif"
+          },
+          "name": {
+            "type": "string",
+            "example": "assisted prone hamstring"
+          },
+          "target": {
+            "type": "string",
+            "example": "hamstrings"
+          },
+          "burnedCalories": {
+            "type": "number",
+            "example": 341
+          },
+          "time": {
+            "type": "number",
+            "example": 3
           }
+        }
       },
       "ExercisesDetails": {
-          "type": "object",
-          "properties": {
-            "bodyParts": {
-              "type": "array",
-
-              "items":{
-                "type": "string",
-                "xml":{
-                "name": "bodyPart"}
-              }
-            },
-            "targets": {
-              "type": "array",
-              "items":{
-                "type": "string",
-                "xml":{
-                "name": "target"}
-              }
-            },
-            "equipments": {
-              "type": "array",
-              "items":{
-                "type": "string",
-                "xml":{
-                "name": "equipment"}
-              }
+        "type": "object",
+        "properties": {
+          "bodyParts": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "'chest', 'upper arms', 'waist'"
+            }
+          },
+          "targets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "'pectorals', 'triceps', 'biceps'"
+            }
+          },
+          "equipments": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "'dumbbell', 'kettlebell', 'ez barbell'"
             }
           }
+        }
       }
     },
     "securitySchemes": {
