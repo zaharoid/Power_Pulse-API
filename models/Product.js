@@ -25,6 +25,7 @@ const productSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
-const ProductCategory = model("ProductCategory", productSchema);
+const Products = model("products", productSchema);
 
-export default ProductCategory;
+
+export default Products;
