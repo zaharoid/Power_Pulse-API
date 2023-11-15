@@ -34,7 +34,7 @@ const addExercise = async (req, res) => {
             const existingExercise = existingDay.data.find(entry => entry.date === formattedDate).doneExercises.find(exercise => exercise.id === exerciseId);
             if (existingExercise){
                 await Dairy.findOneAndUpdate(
-                    { "data.date": formattedDate },
+                    {  "data.date": formattedDate },
                     { $inc: { "data.$[dateEntry].doneExercises.$[exerciseEntry].time": req.body.doneExercises[0].time } },
                     {
                         new: true,
@@ -45,25 +45,24 @@ const addExercise = async (req, res) => {
                     }
                 );
                 return res.status(200).json({ message: "Update successful" });
-            } await Dairy.findOneAndUpdate(
+            } const newExercise = await Dairy.findOneAndUpdate(
                 { "data.date": formattedDate },
                 { $push: { "data.$.doneExercises": {...req.body.doneExercises[0]} } },
                 { new: true, useFindAndModify: false }
             );
     
-            return res.status(200).json({ message: "Exercise added successfully" });
+            return res.status(201).json(newExercise);
         } else {
             // If the day does not exist, create a new one
-            console.log(formattedDate);
-            const newData = {
+            const newDate = {
                 date: moment().format('DD.MM.YYYY'),
                 ...req.body,
             };
-            console.log(newData);
+            console.log(newDate);
 
             await Dairy.findByIdAndUpdate(
                 usersDairy._id,
-                { $push: { data: newData } },
+                { $push: { data: newDate } },
                 { new: true, useFindAndModify: false }
             );
         }
