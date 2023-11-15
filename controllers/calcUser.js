@@ -22,7 +22,6 @@ const calculateCalories = async (req, res) => {
     try {
         const calculations = await MongusModel.find({owner});
         const { height, currentWeight, desiredWeight, birthday, blood, sex, levelActivity} = calculations[0];
-        // console.log('0000000', height, currentWeight, birthday, blood, sex, levelActivity )
         const activityCoefficients = { 1: 1.2, 2: 1.375, 3: 1.55, 4: 1.725, 5: 1.9 };
         const activityCoefficient = activityCoefficients[levelActivity];
 
