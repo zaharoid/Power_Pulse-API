@@ -27,9 +27,7 @@ const signup = async (req, res) => {
 
 const signin = async (req, res) => {
   const { email, password } = req.body;
-  console.log(1);
   const user = await User.findOne({ email });
-  console.log(2);
   if (!user) {
     throw HttpErr(401, "Email or password invalid");
   }
@@ -50,7 +48,26 @@ const signin = async (req, res) => {
     token,
   });
 };
+const getCurrent = async(req, res) => {
+  const {email, name} = req.user;
+
+  res.json({
+    name,
+    email, 
+  })
+};
+
+const logout = async(req,  res) => {
+  const {_id} = req.user;
+  console.log('id', _id);
+  await User.findByIdAndUpdate(_id, {token: ""});
+  res.status(204).json({
+    message: "Ok",
+  });
+}
 export default {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
+  getCurrent: ctrlWrapper(getCurrent),
+  logout: ctrlWrapper(logout),
 };
