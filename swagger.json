@@ -11,10 +11,7 @@
   },
   "consumes": ["application/json", "multipart/form-data"],
   "produces": ["application/json", "multipart/form-data"],
-  "servers": [
-    { "url": "http://localhost:3000" },
-    { "url": "https://powerpulse-171j.onrender.com" }
-  ],
+  "servers": [{ "url": "https://powerpulse-171j.onrender.com/api" }],
   "tags": [
     {
       "name": "Auth",
@@ -229,9 +226,9 @@
       "ProductsResponse": {
         "type": "array",
         "items": {
-              "type": "string",
-              "example": "'cereals', 'dairy', 'dried fruits'"
-            }
+          "type": "string",
+          "example": "'cereals', 'dairy', 'dried fruits'"
+        }
       },
       "Exercises": {
         "type": "object",
