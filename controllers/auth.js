@@ -5,8 +5,15 @@ import Dairy from "../models/Dairy.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import Jimp from "jimp";
+import path from "path";
+import fs from "fs/promises";
 dotenv.config();
+
 const { JWT_SECRET } = process.env;
+
+const posterPath = path.resolve("public", "avatars");
+
 
 const signup = async (req, res) => {
   const { email, password } = req.body;
@@ -15,6 +22,16 @@ const signup = async (req, res) => {
     throw HttpErr(409, `${email} already in use`);
   }
   const hashPassword = await bcrypt.hash(password, 10);
+  if(req.file){
+    const {path: oldPath, filename} = req.file;
+    const newPath = path.join(posterPath, filename);
+    await fs.rename(oldPath, newPath);
+    const image = await Jimp.read(newPath);
+    image.resize(250, 250);
+    await image.writeAsync(newPath);
+    const avatarURL = path.join('avatar', filename);
+    const newUser = await User.create({...req.body, avatarURL, password, hashPassword});
+  }
 
   const newUser = await User.create({ ...req.body, password: hashPassword });
   await Dairy.create({ owner: newUser._id })
@@ -57,6 +74,27 @@ const getCurrent = async(req, res) => {
   })
 };
 
+const updateAvatar = async(req, res) => {
+  const{email} = req.user;
+  
+  const {path: oldPath, filename} = req.file;
+
+  const newPath = path.join(posterPath, filename)
+
+  await fs.rename(oldPath, newPath);
+
+  const image = await Jimp.read(newPath);
+  image.resize(250, 250);
+  await image.writeAsync(newPath);
+
+  const avatarURL = path.join('avatar', filename);
+  await User.findByIdAndUpdate({email}, {avatarURL}, {new: true})
+
+  res.status(200).json({
+    avatarURL
+  })
+}
+
 const logout = async(req,  res) => {
   const {_id} = req.user;
   console.log('id', _id);
@@ -70,4 +108,5 @@ export default {
   signin: ctrlWrapper(signin),
   getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
+  updateAvatar: ctrlWrapper(updateAvatar),
 };
