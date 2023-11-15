@@ -26,26 +26,33 @@ const inputInfoInDay = async (req, res) => {
         const formattedDate = moment().format('DD.MM.YYYY');
 
         // Find the day with the formatted date
-        const existingDay = usersDairy.data.find(day => day.date === formattedDate);
+        const existingDay = await Dairy.findOne({ owner: userId, "data.date": formattedDate });
 
         // If the day exists, update it with new information
         if (existingDay) {
-            const inputData = { ...req.body };
-
-            // Update the existing day with new information
-            await Dairy.updateOne(
-                { 'data.date': formattedDate },
-                {
-                    $set: {
-                        'data.$.burnedCalories': existingDay.burnedCalories + inputData.burnedCalories,
-                        'data.$.sportTime': existingDay.sportTime + inputData.sportTime,
-                    },
-                    $push: {
-                        'data.$.doneExercises': { $each: inputData.doneExercises },
-                        'data.$.eatedProducts': { $each: inputData.eatedProducts },
-                    },
-                }
+            // Check if the exercise with the specified ID already exists for the date
+            const exerciseId = req.body.doneExercises[0].id;
+            const existingExercise = existingDay.data.find(entry => entry.date === formattedDate).doneExercises.find(exercise => exercise.id === exerciseId);
+            if (existingExercise){
+                await Dairy.findOneAndUpdate(
+                    { "data.date": formattedDate },
+                    { $inc: { "data.$[dateEntry].doneExercises.$[exerciseEntry].time": req.body.doneExercises[0].time } },
+                    {
+                        new: true,
+                        arrayFilters: [
+                            { "dateEntry.date": formattedDate },
+                            { "exerciseEntry.id": exerciseId }
+                        ]
+                    }
+                );
+                return res.status(200).json({ message: "Update successful" });
+            } await Dairy.findOneAndUpdate(
+                { "data.date": formattedDate },
+                { $push: { "data.$.doneExercises": {...req.body.doneExercises[0]} } },
+                { new: true, useFindAndModify: false }
             );
+    
+            return res.status(200).json({ message: "Exercise added successfully" });
         } else {
             // If the day does not exist, create a new one
             console.log(formattedDate);
