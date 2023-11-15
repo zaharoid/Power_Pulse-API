@@ -17,11 +17,19 @@ const signup = async (req, res) => {
   const hashPassword = await bcrypt.hash(password, 10);
 
   const newUser = await User.create({ ...req.body, password: hashPassword });
-  await Dairy.create({ owner: newUser._id })
-  
+  await Dairy.create({ owner: newUser._id });
+  const payload = {
+    id: newUser._id,
+  };
+
+  const token = await jwt.sign(payload, JWT_SECRET);
+
+  await User.findByIdAndUpdate(newUser._id, { token });
+
   res.status(201).json({
     name: newUser.name,
     email: newUser.email,
+    token,
   });
 };
 
@@ -32,7 +40,7 @@ const signin = async (req, res) => {
     throw HttpErr(401, "Email or password invalid");
   }
   const passwordCompare = await bcrypt.compare(password, user.password);
-  
+
   if (!passwordCompare) {
     throw HttpErr(401, "Email or password invalid");
   }
@@ -48,24 +56,24 @@ const signin = async (req, res) => {
     token,
   });
 };
-const getCurrent = async(req, res) => {
-  const {email, name} = req.user;
+const getCurrent = async (req, res) => {
+  const { email, name } = req.user;
 
   res.json({
     name,
-    email, 
-  })
+    email,
+  });
 };
 
-const logout = async(req,  res) => {
+const logout = async (req, res) => {
   const { _id } = req.user;
-  
+
   await User.findByIdAndUpdate(_id, { token: "" });
-  
+
   res.status(204).json({
     message: "Ok",
   });
-}
+};
 export default {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
