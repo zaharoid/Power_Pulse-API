@@ -10,13 +10,18 @@ const dayStingSchema = Joi.object({
 
 const dayInfoSchema = Joi.object({
     date: Joi.date(),
-    doneExercises: Joi.array().allow(null),
-    eatedProducts: Joi.array().allow(null),
+    doneExercises: Joi.object().allow(null),
+    products: Joi.object().allow(null),
     burnedCalories: Joi.number().allow(null).min(0),
     sportTime: Joi.number().allow(null).min(0),
 })
 
-export { daySchema, dayInfoSchema, dayStingSchema };
+const deleteSchema = Joi.object({
+    id: Joi.string(),
+    date: Joi.string().regex(/^\d{2}\.\d{2}\.\d{4}$/).length(10)
+})
+
+export { daySchema, dayInfoSchema, dayStingSchema, deleteSchema };
 
 /*
 day{

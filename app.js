@@ -10,6 +10,7 @@ import swaggerDocument from "./swagger.json" assert { type: "json" };
 import "dotenv/config";
 
 import { default as exercisesRouter } from ".//routes/api/exercises.js";
+import dairyRouter from "./routes/api/dairy.js";
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/auth", authRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/exercises", exercisesRouter);
+app.use("/api/dairy", dairyRouter)
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
