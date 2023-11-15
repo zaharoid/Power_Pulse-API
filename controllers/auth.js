@@ -54,6 +54,10 @@ const signin = async (req, res) => {
 
   res.json({
     token,
+    user: {
+      name: user.name,
+      email: user.email,
+    },
   });
 };
 const getCurrent = async (req, res) => {

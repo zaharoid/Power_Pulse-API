@@ -99,6 +99,40 @@
         }
       }
     },
+    "/auth/signin": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Logs user into the system",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "User login object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Email or password invalid"
+          }
+        }
+      }
+    },
     "/products": {
       "post": {
         "tags": ["Products"],
