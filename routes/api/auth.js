@@ -13,12 +13,7 @@ const userSigninValidate = validateBody(userSigninSchema);
 
 const authRouter = express.Router();
 // authRouter.use(authenticate);
-authRouter.post("/signup", authController.signup);
-authRouter.post(
-  "/signin",
-  isEmptyBody,
-  userSigninValidate,
-  authController.signin
-);
+authRouter.post("/signup", isEmptyBody, userSignupValidate, authController.signup);
+authRouter.post("/signin", isEmptyBody, userSigninValidate, authController.signin);
 
 export default authRouter;
