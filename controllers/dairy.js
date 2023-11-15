@@ -1,9 +1,4 @@
 import Dairy from "../models/Dairy.js";
-import { daySchema } from "../models/Day.js";
-
-import { validationResult } from "express-validator";
-
-import validateBody from "../decorators/validateBody.js";
 
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -59,7 +54,6 @@ const addExercise = async (req, res) => {
             date: moment().format('DD.MM.YYYY'),
             ...req.body,
         };
-        console.log(newDate);
 
         await Dairy.findByIdAndUpdate(
             usersDairy._id,
@@ -156,7 +150,6 @@ const deleteItemById = async (req, res) => {
         const itemId = req.body.id; // Assuming the item ID is passed in the request parameters
         const dateToDelete = req.body.date; // Assuming the date is passed in the request parameters
 
-        console.log(itemId, dateToDelete);
         const usersDairy = await Dairy.findOne({ owner: userId });
 
         if (!usersDairy) {
@@ -173,7 +166,6 @@ const deleteItemById = async (req, res) => {
             },
             { new: true }
         );
-        console.log(updatedDairy);
         if (!updatedDairy) {
             return res.status(404).json({ error: "Item not found on the specified date" });
         }
