@@ -22,10 +22,10 @@ dairyRouter.get(
 )
 
 dairyRouter.patch(
-    "/inputInfo",
+    "/addExercise",
     authenticate,
     dayInfoSchemaValidate,
-    dairyCtrl.inputInfo
+    dairyCtrl.addExercise
 )
 
 export default dairyRouter;

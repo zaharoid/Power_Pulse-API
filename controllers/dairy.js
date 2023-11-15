@@ -15,13 +15,12 @@ dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const inputInfoInDay = async (req, res) => {
+const addExercise = async (req, res) => {
     const token = req.headers["authorization"].split(" ")[1];
     const userId = jwt.verify(token, JWT_SECRET).id;
 
     try {
         const usersDairy = await Dairy.findOne({ owner: userId });
-
         // Format the current date using moment
         const formattedDate = moment().format('DD.MM.YYYY');
 
@@ -77,36 +76,25 @@ const inputInfoInDay = async (req, res) => {
 };
 
 const getInfoAboutDay = async (req, res) => {
-    console.log("1");
     const token = req.headers["authorization"].split(" ")[1];
-    console.log("2");
     const userId = jwt.verify(token, JWT_SECRET).id;
-    console.log("3");
-    console.log("4");
+
     try {
-        console.log("5");
         const dateOfDay = req.body.date;
-        const day = await Dairy.findOne({ owner: userId }).findOne({ "data.date": dateOfDay });
-        console.log("6");
-        console.log(dateOfDay, userId);
-        console.log(day);
-        if(!day){
-            console.log("7");
-            console.log("Day is empty");
+        const day = await Dairy.findOne({ owner: userId, "data.date": dateOfDay }, { "data.$": 1 });
+
+        if (!day) {
             return res.status(200).json({ message: "Day is empty" });
-        } else{
-            console.log("8");
-            console.log({...day})
-            console.log("9");
+        } else {
             return res.status(200).json({...day.toObject()});
         }
     } catch (error) {
-        console.error("Ошибка при выполнении запроса:", error);
         return res.status(500).json({ error: "Internal Server Error" });
     }
-} 
+};
+
 
 export default {
-    inputInfo: ctrlWrapper(inputInfoInDay),
+    addExercise: ctrlWrapper(addExercise),
     getInfo: ctrlWrapper(getInfoAboutDay)
 };
