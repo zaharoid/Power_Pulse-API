@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import Jimp from "jimp";
+import gravatar from "gravatar";
 import path from "path";
 import fs from "fs/promises";
 dotenv.config();
@@ -14,7 +15,6 @@ const { JWT_SECRET } = process.env;
 
 const posterPath = path.resolve("public", "avatars");
 
-
 const signup = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -22,19 +22,26 @@ const signup = async (req, res) => {
     throw HttpErr(409, `${email} already in use`);
   }
   const hashPassword = await bcrypt.hash(password, 10);
-  if(req.file){
-    const {path: oldPath, filename} = req.file;
-    const newPath = path.join(posterPath, filename);
-    await fs.rename(oldPath, newPath);
-    const image = await Jimp.read(newPath);
-    image.resize(250, 250);
-    await image.writeAsync(newPath);
-    const avatarURL = path.join('avatar', filename);
-    const newUser = await User.create({...req.body, avatarURL, password, hashPassword});
-  }
+  // if (req.file) {
+  //   const { path: oldPath, filename } = req.file;
+  //   const newPath = path.join(posterPath, filename);
+  //   await fs.rename(oldPath, newPath);
+  //   const image = await Jimp.read(newPath);
 
-  const newUser = await User.create({ ...req.body, password: hashPassword });
+  const avatarURL = gravatar.url(email);
+
+  // await image.writeAsync(newPath);
+  // const avatarURL = path.join("avatar", filename);
+  const newUser = await User.create({
+    ...req.body,
+    avatarURL: `${avatarURL}?s=250`,
+    password: hashPassword,
+  });
+  // }
+
+  // const newUser = await User.create({ ...req.body, password: hashPassword });
   await Dairy.create({ owner: newUser._id });
+
   const payload = {
     id: newUser._id,
   };
@@ -47,6 +54,7 @@ const signup = async (req, res) => {
     user: {
       name: newUser.name,
       email: newUser.email,
+      avatarURL: `${avatarURL}?s=250`,
     },
     token,
   });
@@ -68,7 +76,7 @@ const signin = async (req, res) => {
     id: user._id,
   };
   const token = await jwt.sign(payload, JWT_SECRET);
-  await User.findByIdAndUpdate(user._id, { token });
+  await User.findByIdAndUpdate(user._id, { token }, "-createAt");
   // , { expiresIn: "23h" }
 
   res.json({
@@ -88,13 +96,12 @@ const getCurrent = async (req, res) => {
   });
 };
 
+const updateAvatar = async (req, res) => {
+  const { email } = req.user;
 
-const updateAvatar = async(req, res) => {
-  const{email} = req.user;
-  
-  const {path: oldPath, filename} = req.file;
+  const { path: oldPath, filename } = req.file;
 
-  const newPath = path.join(posterPath, filename)
+  const newPath = path.join(posterPath, filename);
 
   await fs.rename(oldPath, newPath);
 
@@ -102,14 +109,13 @@ const updateAvatar = async(req, res) => {
   image.resize(250, 250);
   await image.writeAsync(newPath);
 
-  const avatarURL = path.join('avatar', filename);
-  await User.findByIdAndUpdate({email}, {avatarURL}, {new: true})
+  const avatarURL = path.join("avatar", filename);
+  await User.findByIdAndUpdate({ email }, { avatarURL }, { new: true });
 
   res.status(200).json({
-    avatarURL
-  })
-}
-
+    avatarURL,
+  });
+};
 
 const logout = async (req, res) => {
   const { _id } = req.user;
@@ -118,10 +124,25 @@ const logout = async (req, res) => {
 
   res.status(204).json({ message: "No content" });
 };
+
+const updateUserInfo = async (req, res) => {
+  const { _id } = req.user;
+
+  const user = await User.findByIdAndUpdate({ _id }, req.body);
+
+  if (!user) {
+    throw HttpErr(404);
+  }
+  res.status(200).json({
+    name: user.name,
+    email: user.email,
+  });
+};
 export default {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
   getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
   updateAvatar: ctrlWrapper(updateAvatar),
+  updateUserInfo: ctrlWrapper(updateUserInfo),
 };
