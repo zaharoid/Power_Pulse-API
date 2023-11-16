@@ -4,14 +4,24 @@ const daySchema = Joi.object({
     date: Joi.date().required(),
 });
 
+const dayStingSchema = Joi.object({
+    date: Joi.string().regex(/^\d{2}\.\d{2}\.\d{4}$/).length(10).required()
+})
+
 const dayInfoSchema = Joi.object({
-    doneExercises: Joi.array().allow(null),
-    eatedProducts: Joi.array().allow(null),
+    date: Joi.date(),
+    doneExercises: Joi.object().allow(null),
+    products: Joi.object().allow(null),
     burnedCalories: Joi.number().allow(null).min(0),
     sportTime: Joi.number().allow(null).min(0),
 })
 
-export { daySchema, dayInfoSchema };
+const deleteSchema = Joi.object({
+    id: Joi.string(),
+    date: Joi.string().regex(/^\d{2}\.\d{2}\.\d{4}$/).length(10)
+})
+
+export { daySchema, dayInfoSchema, dayStingSchema, deleteSchema };
 
 /*
 day{

@@ -1,7 +1,4 @@
 import Dairy from "../models/Dairy.js";
-import { daySchema } from "../models/Day.js";
-
-import { validationResult } from "express-validator";
 
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -13,94 +10,172 @@ dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const createDay = async (req, res) => {
+const addExercise = async (req, res) => {
     const token = req.headers["authorization"].split(" ")[1];
     const userId = jwt.verify(token, JWT_SECRET).id;
 
-    try {
-        const usersDairy = await Dairy.findOne({ owner: userId });
+    const usersDairy = await Dairy.findOne({ owner: userId });
+    // Format the current date using moment
+    const formattedDate = moment().format('DD.MM.YYYY');
 
-        // Проверка уникальности даты внутри списка data
-        const existingDay = usersDairy.data.find(day => moment(day.date, 'DD.MM.YYYY').isSame(moment(req.body.date), 'day'));
+    // Find the day with the formatted date
+    const existingDay = await Dairy.findOne({ owner: userId, "data.date": formattedDate });
 
-        if (existingDay) {
-            // Объект с такой датой уже существует, отправляем ошибку
-            return res.status(400).json({ error: "День із зазначеною датою вже існує" });
-        }
+    // If the day exists, update it with new information
+    if (existingDay) {
+        // Check if the exercise with the specified ID already exists for the date
+        const exerciseId = req.body.doneExercises.id;
+        const existingExercise = existingDay.data.find(entry => entry.date === formattedDate).doneExercises.find(exercise => exercise.id === exerciseId);
+        if (existingExercise){
+            await Dairy.findOneAndUpdate(
+                { owner: userId, "data.date": formattedDate },
+                { $inc: { "data.$[dateEntry].doneExercises.$[exerciseEntry].time": req.body.doneExercises.time } },
+                {
+                    new: true,
+                    arrayFilters: [
+                        { "dateEntry.date": formattedDate },
+                        { "exerciseEntry.id": exerciseId }
+                    ]
+                }
+            );
+            
+            return res.status(200).json({ message: "Update successful" });
+        } const newExercise = await Dairy.findOneAndUpdate(
+            { owner: userId, "data.date": formattedDate },
+            { $push: { "data.$.doneExercises": {...req.body.doneExercises} } },
+            { new: true, useFindAndModify: false }
+        );
+        const addedExercise = newExercise.data.find(entry => entry.date === formattedDate).doneExercises.slice(-1)[0];
 
-        // Валидация данных с использованием схемы Joi
-        const validationResult = daySchema.validate(req.body);
-
-        if (validationResult.error) {
-            console.error('Ошибка валидации:', validationResult.error.details);
-            return res.status(400).json({ error: "Неправильний формат даних" });
-        }
-
-        // Округление момента времени до начала дня
-        const roundedDate = moment(req.body.date).startOf('day');
-
-        // Форматирование даты в нужный формат "дд.мм.гггг"
-        const formattedDate = roundedDate.format('DD.MM.YYYY');
-
-        const newData = { ...validationResult.value, date: formattedDate };
+        return res.status(201).json(addedExercise);
+    } else {
+        // If the day does not exist, create a new one
+        const newDate = {
+            date: moment().format('DD.MM.YYYY'),
+            ...req.body,
+        };
 
         await Dairy.findByIdAndUpdate(
             usersDairy._id,
-            { $push: { data: newData } },
+            { $push: { data: newDate } },
             { new: true, useFindAndModify: false }
         );
-
-        return  res.status(200).json(true);
-    } catch (error) {
-        console.error("Ошибка при выполнении запроса:", error);
-        return res.status(500).json({ error: "Internal Server Error" });
     }
+
+    return res.status(200).json(true);
 };
 
-const inputInfoInDay = async (req, res) => {
-    const token = req.headers["authorization"].split(" ")[1];
-    const userId = jwt.verify(token, JWT_SECRET).id;
+const addProduct = async (req, res) => {
+        const token = req.headers["authorization"].split(" ")[1];
+        const userId = jwt.verify(token, JWT_SECRET).id;
 
-    try {
         const usersDairy = await Dairy.findOne({ owner: userId });
-
         // Format the current date using moment
         const formattedDate = moment().format('DD.MM.YYYY');
 
         // Find the day with the formatted date
-        const existingDay = usersDairy.data.find(day => day.date === formattedDate);
+        const existingDay = await Dairy.findOne({ owner: userId, "data.date": formattedDate });
 
         // If the day exists, update it with new information
         if (existingDay) {
-            const inputData = { ...req.body };
+            const productId = req.body.products.id;
+            const existingProductIndex = existingDay.data.findIndex(entry => entry.date === formattedDate);
+            
+            if (existingProductIndex !== -1) {
+                const productIndex = existingDay.data[existingProductIndex].products.findIndex(product => product.id === productId);
 
-            // Update the existing day with new information
-            await Dairy.updateOne(
-                { 'data.date': formattedDate },
-                { $push: { 'data.$.doneExercises': inputData.doneExercises, 'data.$.eatedProducts': inputData.eatedProducts, 'data.$.burnedCalories': inputData.burnedCalories, 'data.$.sportTime': inputData.sportTime } }
-            );
+                if (productIndex !== -1) {
+                    // Update the weight of the existing product
+                    await Dairy.findOneAndUpdate(
+                        { owner: userId, "data.date": formattedDate },
+                        { $inc: { ["data." + existingProductIndex + ".products." + productIndex + ".weight"]: req.body.products.weight } },
+                        { new: true, useFindAndModify: false }
+                    );
+
+                    return res.status(200).json({ message: "Update successful" });
+                } else {
+                    // Add a new product if the product ID doesn't exist
+                    const newProduct = await Dairy.findOneAndUpdate(
+                        { owner: userId, "data.date": formattedDate },
+                        { $push: { ["data." + existingProductIndex + ".products"]: { ...req.body.products } } },
+                        { new: true, useFindAndModify: false }
+                    );
+
+                    const addedProduct = newProduct.data[existingProductIndex].products.slice(-1)[0];
+                    return res.status(201).json(addedProduct);
+                }
+            }
         } else {
             // If the day does not exist, create a new one
-            const newData = {
-                date: formattedDate,
-                ...req.body
+            const newDate = {
+                date: moment().format('DD.MM.YYYY'),
+                products: [{ ...req.body.products }],
             };
 
             await Dairy.findByIdAndUpdate(
                 usersDairy._id,
-                { $push: { data: newData } },
+                { $push: { data: newDate } },
                 { new: true, useFindAndModify: false }
             );
-        }
 
-        return res.status(200).json(true);
+            const addedProduct = newDate.products[0];
+            return res.status(201).json(addedProduct);
+        }
+};
+
+
+const getInfoAboutDay = async (req, res) => {
+    const token = req.headers["authorization"].split(" ")[1];
+    const userId = jwt.verify(token, JWT_SECRET).id;
+
+    try {
+        const dateOfDay = req.body.date;
+        const day = await Dairy.findOne({ owner: userId, "data.date": dateOfDay }, { "data.$": 1 });
+
+        if (!day) {
+            return res.status(200).json({ message: "Day is empty" });
+        } else {
+            return res.status(200).json({...day.toObject()});
+        }
     } catch (error) {
-        console.error("Ошибка при выполнении запроса:", error);
         return res.status(500).json({ error: "Internal Server Error" });
     }
 };
 
+const deleteItemById = async (req, res) => {
+    
+        const token = req.headers["authorization"].split(" ")[1];
+        const userId = jwt.verify(token, JWT_SECRET).id;
+
+        const itemId = req.body.id; // Assuming the item ID is passed in the request parameters
+        const dateToDelete = req.body.date; // Assuming the date is passed in the request parameters
+
+        const usersDairy = await Dairy.findOne({ owner: userId });
+
+        if (!usersDairy) {
+            return res.status(404).json({ error: "Dairy not found" });
+        }
+
+        const updatedDairy = await Dairy.findOneAndUpdate(
+            { owner: userId, "data.date": dateToDelete },
+            {
+                $pull: {
+                    "data.$.doneExercises": { id: itemId },
+                    "data.$.products": { id: itemId },
+                },
+            },
+            { new: true }
+        );
+        if (!updatedDairy) {
+            return res.status(404).json({ error: "Item not found on the specified date" });
+        }
+
+        return res.status(200).json({ message: "Item deleted successfully" });
+};
+
 export default {
-    createDay: ctrlWrapper(createDay),
-    inputInfo: ctrlWrapper(inputInfoInDay),
+    addExercise: ctrlWrapper(addExercise),
+    addProduct: ctrlWrapper(addProduct),
+    getInfo: ctrlWrapper(getInfoAboutDay),
+    deleteSmth: ctrlWrapper(deleteItemById)
 };
