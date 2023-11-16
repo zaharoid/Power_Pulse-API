@@ -76,9 +76,7 @@ const logout = async (req, res) => {
 
   await User.findByIdAndUpdate(_id, { token: "" });
 
-  res.status(204).json({
-    message: "Ok",
-  });
+  res.status(204);
 };
 export default {
   signup: ctrlWrapper(signup),

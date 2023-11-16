@@ -99,36 +99,43 @@
         }
       }
     },
-    "/auth/signin": {
-      "post": {
+    "/auth/current": {
+      "get": {
         "tags": ["Auth"],
-        "summary": "Logs user into the system",
+        "summary": "Current user",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "description": "User login object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoginRequest"
-              }
-            }
-          }
-        },
+
         "responses": {
           "200": {
             "description": "Successful operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoginResponse"
+                  "$ref": "#/components/schemas/CurrentUserResponse"
                 }
               }
             }
           },
           "401": {
-            "description": "Email or password invalid"
+            "description": "User unauthorized"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User logout",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "204": {
+            "description": "Successful operation"
+          },
+          "401": {
+            "description": "User unauthorized"
           }
         }
       }
@@ -261,6 +268,17 @@
           }
         }
       },
+
+      "CurrentUserResponse": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "Username" },
+          "email": {
+            "type": "string",
+            "example": "exampleEmail@mail.com"
+          }
+        }
+      },
       "ProductsResponse": {
         "type": "array",
         "items": {
@@ -268,6 +286,7 @@
           "example": "'cereals', 'dairy', 'dried fruits'"
         }
       },
+
       "Exercises": {
         "type": "object",
         "properties": {
