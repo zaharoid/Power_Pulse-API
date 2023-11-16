@@ -34,11 +34,21 @@ const signup = async (req, res) => {
   }
 
   const newUser = await User.create({ ...req.body, password: hashPassword });
-  await Dairy.create({ owner: newUser._id })
-  
+  await Dairy.create({ owner: newUser._id });
+  const payload = {
+    id: newUser._id,
+  };
+
+  const token = await jwt.sign(payload, JWT_SECRET);
+
+  await User.findByIdAndUpdate(newUser._id, { token });
+
   res.status(201).json({
-    name: newUser.name,
-    email: newUser.email,
+    user: {
+      name: newUser.name,
+      email: newUser.email,
+    },
+    token,
   });
 };
 
@@ -49,7 +59,7 @@ const signin = async (req, res) => {
     throw HttpErr(401, "Email or password invalid");
   }
   const passwordCompare = await bcrypt.compare(password, user.password);
-  
+
   if (!passwordCompare) {
     throw HttpErr(401, "Email or password invalid");
   }
@@ -63,16 +73,21 @@ const signin = async (req, res) => {
 
   res.json({
     token,
+    user: {
+      name: user.name,
+      email: user.email,
+    },
   });
 };
-const getCurrent = async(req, res) => {
-  const {email, name} = req.user;
+const getCurrent = async (req, res) => {
+  const { email, name } = req.user;
 
   res.json({
     name,
-    email, 
-  })
+    email,
+  });
 };
+
 
 const updateAvatar = async(req, res) => {
   const{email} = req.user;
@@ -95,14 +110,14 @@ const updateAvatar = async(req, res) => {
   })
 }
 
-const logout = async(req,  res) => {
-  const {_id} = req.user;
-  console.log('id', _id);
-  await User.findByIdAndUpdate(_id, {token: ""});
-  res.status(204).json({
-    message: "Ok",
-  });
-}
+
+const logout = async (req, res) => {
+  const { _id } = req.user;
+
+  await User.findByIdAndUpdate(_id, { token: "" });
+
+  res.status(204).json({ message: "No content" });
+};
 export default {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),

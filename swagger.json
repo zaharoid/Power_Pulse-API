@@ -11,10 +11,7 @@
   },
   "consumes": ["application/json", "multipart/form-data"],
   "produces": ["application/json", "multipart/form-data"],
-  "servers": [
-    { "url": "http://localhost:3000" },
-    { "url": "https://powerpulse-171j.onrender.com" }
-  ],
+  "servers": [{ "url": "https://powerpulse-171j.onrender.com/api" }],
   "tags": [
     {
       "name": "Auth",
@@ -68,7 +65,7 @@
         }
       }
     },
-    "/auth/singin": {
+    "/auth/signin": {
       "post": {
         "tags": ["Auth"],
         "summary": "Logs user into the system",
@@ -98,6 +95,47 @@
           },
           "401": {
             "description": "Email or password invalid"
+          }
+        }
+      }
+    },
+    "/auth/current": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Current user",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentUserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User logout",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "204": {
+            "description": "Successful operation"
+          },
+          "401": {
+            "description": "User unauthorized"
           }
         }
       }
@@ -199,6 +237,10 @@
           "name": {
             "type": "string",
             "example": "Username"
+          },
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
           }
         }
       },
@@ -226,13 +268,25 @@
           }
         }
       },
+
+      "CurrentUserResponse": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "Username" },
+          "email": {
+            "type": "string",
+            "example": "exampleEmail@mail.com"
+          }
+        }
+      },
       "ProductsResponse": {
         "type": "array",
         "items": {
-              "type": "string",
-              "example": "'cereals', 'dairy', 'dried fruits'"
-            }
+          "type": "string",
+          "example": "'cereals', 'dairy', 'dried fruits'"
+        }
       },
+
       "Exercises": {
         "type": "object",
         "properties": {
