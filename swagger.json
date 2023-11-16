@@ -141,7 +141,37 @@
       }
     },
     "/products": {
-      "post": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Get list of products",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                  
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized"
+          },
+          "404": {
+            "description": "Categories of products not found"
+          }
+        }
+      }
+    },
+    "/products/categories": {
+      "get": {
         "tags": ["Products"],
         "summary": "Get list of products categories",
         "parameters": [],
@@ -152,22 +182,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProductsResponse"
+                    "$ref": "#/components/schemas/ProductsCategories"
                 }
+                
               }
             }
           },
+          "401": {
+            "description": "User unauthorized"
+          },
           "404": {
-            "description": "Categories of products not found"
+            "description": "Products not found"
           }
         }
       }
     },
-    "/exercises": {
-      "get": {
-        "tags": ["Exercises"],
-        "summary": "List of exercises",
+    "/dairy/createDay": {
+      "post": {
+        "tags": ["Dairy"],
+        "summary": "Creates new day in dairy for user",
         "parameters": [],
+        "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -176,11 +211,67 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Exercises"
+                    "$ref": "#/components/schemas/"
                   }
                 }
               }
             }
+          },
+          "401": {
+            "description": "User unauthorized"
+          }
+        }
+      }
+    },
+    "/dairy/inputInfo": {
+      "patch": {
+        "tags": ["Dairy"],
+        "summary": "Updates day in dairy for user",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized"
+          }
+        }
+      }
+    },
+
+    "/exercises": {
+      "get": {
+        "tags": ["Exercises"],
+        "summary": "List of exercises",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Exercise"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized"
           }
         }
       }
@@ -190,6 +281,7 @@
         "tags": ["Exercises"],
         "summary": "List of body parts, equipments and muscles",
         "parameters": [],
+        "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -200,13 +292,31 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "User unauthorized"
           }
         }
       }
     }
   },
-
   "components": {
+    "definitions": {
+      "ArrayOfCategories": {
+        "type": "array",
+        "items": {
+          "minItems": 1,
+          "type": "object",
+          "required": ["category"],
+          "properties": {
+            "category": {
+              "type": "string",
+              "example":"'chest', 'upper arms', 'waist'"
+            }
+          }
+        }
+      }
+    }, 
     "schemas": {
       "RegistrationRequest": {
         "type": "object",
@@ -279,15 +389,62 @@
           }
         }
       },
-      "ProductsResponse": {
-        "type": "array",
-        "items": {
-          "type": "string",
-          "example": "'cereals', 'dairy', 'dried fruits'"
+      "Product": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "655144fb56a08fda8eb06785"
+          },
+          "weight": {
+            "type": "number",
+            "example": "upper legs"
+          },
+          "calories": {
+            "type": "number",
+            "example": "assisted"
+          },
+          "category": {
+            "type": "string",
+            "example": "fish"
+          },
+          "title": {
+            "type": "string",
+            "example": "marlin"
+          },
+          "groupBloodNotAllowed": {
+            "type": "object",
+            "properties": {
+              "1": {
+                "type": "boolean",
+                "example": false
+              },
+              "2": {
+                "type": "boolean",
+                "example": false
+              },
+              "3": {
+                "type": "boolean",
+                "example": true
+              },
+              "4": {
+                "type": "boolean",
+                "example": true
+              }
+            }
+          }
         }
       },
+      "ProductsCategories": {
+        "type": "array",
+        "items":{
+          "type":"string",
+          "example": "cereals, dairy, dried fruits"
+        }
+        
 
-      "Exercises": {
+      },
+      "Exercise": {
         "type": "object",
         "properties": {
           "_id": {
