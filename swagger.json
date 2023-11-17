@@ -102,7 +102,7 @@
     "/auth/current": {
       "get": {
         "tags": ["Auth"],
-        "summary": "Current user",
+        "summary": "Get current user",
         "parameters": [],
         "security": [{ "Bearer": [] }],
 
@@ -140,6 +140,71 @@
         }
       }
     },
+    "/auth/avatar": {
+      "patch": {
+        "tags": ["Auth"],
+        "summary": "Updates user`s avatar",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "content": {
+            "image/png": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvatarResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized"
+          }
+        }
+      }
+    },
+    "/auth/info": {
+      "patch": {
+        "tags": ["Auth"],
+        "summary": "Updates user`s information",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserInfo"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfo"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized"
+          }
+        }
+      }
+    },
     "/products": {
       "get": {
         "tags": ["Products"],
@@ -156,7 +221,6 @@
                   "items": {
                     "$ref": "#/components/schemas/Product"
                   }
-                  
                 }
               }
             }
@@ -182,9 +246,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                    "$ref": "#/components/schemas/ProductsCategories"
+                  "$ref": "#/components/schemas/ProductsCategories"
                 }
-                
               }
             }
           },
@@ -249,11 +312,10 @@
         }
       }
     },
-
     "/exercises": {
       "get": {
         "tags": ["Exercises"],
-        "summary": "List of exercises",
+        "summary": "Get list of exercises",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
@@ -279,7 +341,7 @@
     "/exercises/details": {
       "get": {
         "tags": ["Exercises"],
-        "summary": "List of body parts, equipments and muscles",
+        "summary": "Get list of body parts, equipments and muscles",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
@@ -301,22 +363,6 @@
     }
   },
   "components": {
-    "definitions": {
-      "ArrayOfCategories": {
-        "type": "array",
-        "items": {
-          "minItems": 1,
-          "type": "object",
-          "required": ["category"],
-          "properties": {
-            "category": {
-              "type": "string",
-              "example":"'chest', 'upper arms', 'waist'"
-            }
-          }
-        }
-      }
-    }, 
     "schemas": {
       "RegistrationRequest": {
         "type": "object",
@@ -340,14 +386,24 @@
       "RegistrationResponse": {
         "type": "object",
         "properties": {
-          "email": {
-            "type": "string",
-            "format": "email"
+          "user": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "name": {
+                "type": "string",
+                "example": "Username"
+              },
+              "avatarURL": {
+                "type": "string",
+                "example": "//www.gravatar.com/avatar/6bf1c3e37665abb9a1e0e3f81796c87c?s=2503"
+              }
+            }
           },
-          "name": {
-            "type": "string",
-            "example": "Username"
-          },
+
           "token": {
             "type": "string",
             "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
@@ -372,17 +428,49 @@
       "LoginResponse": {
         "type": "object",
         "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "name": {
+                "type": "string",
+                "example": "Username"
+              }
+            }
+          },
           "token": {
             "type": "string",
             "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
           }
         }
       },
-
+      "AvatarResponse": {
+        "type": "object",
+        "properties": {
+          "avatarURL": {
+            "type": "string",
+            "example": "//www.gravatar.com/avatar/6bf1c3e37665abb9a1e0e3f81796c87c?s=2503"
+          }
+        }
+      },
       "CurrentUserResponse": {
         "type": "object",
         "properties": {
           "name": { "type": "string", "example": "Username" },
+          "email": {
+            "type": "string",
+            "example": "exampleEmail@mail.com"
+          }
+        }
+      },
+      "UserInfo": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "name": { "type": "string", "example": "Changed Username" },
           "email": {
             "type": "string",
             "example": "exampleEmail@mail.com"
@@ -437,12 +525,10 @@
       },
       "ProductsCategories": {
         "type": "array",
-        "items":{
-          "type":"string",
-          "example": "cereals, dairy, dried fruits"
+        "items": {
+          "type": "string",
+          "example": "'cereals', 'dairy', 'dried fruits'"
         }
-        
-
       },
       "Exercise": {
         "type": "object",
