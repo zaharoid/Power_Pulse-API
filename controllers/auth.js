@@ -52,8 +52,8 @@ const signup = async (req, res) => {
 
   res.status(201).json({
     user: {
-      name: newUser.name,
       email: newUser.email,
+      name: newUser.name,
       avatarURL: `${avatarURL}?s=250`,
     },
     token,
@@ -77,14 +77,13 @@ const signin = async (req, res) => {
   };
   const token = await jwt.sign(payload, JWT_SECRET);
   await User.findByIdAndUpdate(user._id, { token }, "-createAt");
-  // , { expiresIn: "23h" }
 
   res.json({
-    token,
     user: {
       name: user.name,
       email: user.email,
     },
+     token
   });
 };
 const getCurrent = async (req, res) => {
