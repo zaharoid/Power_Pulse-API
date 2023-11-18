@@ -24,18 +24,27 @@ const getAllCategoryProducts = async (req, res) => {
   } catch (error) {
     console.error(error);
     next(error);
-  
   }
 };
 
 const getAllProducts = async (req, res) => {
-  const result = await Products.find();
-  if (!result) {
-    throw HttpErr(404);
-  }
-  res.json(result);
-};
+  try {
+    const keyWord = req.query.keyword;
+    const userBloodGroup = req.user.bloodGroup;
 
+    const result = await Products.find({
+      title: { $regex: keyWord, $options: "i" },
+      recommendedBloodGroups: userBloodGroup,
+    });
+    if (!result || result.length === 0) {
+      throw HttpErr(404);
+    }
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
 
 export default {
   getAllCategoryProducts: ctrlWrapper(getAllCategoryProducts),
