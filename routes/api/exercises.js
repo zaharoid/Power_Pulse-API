@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get('/', authenticate, exercisesController.getAllExercises);
 router.get('/details', authenticate, exercisesController.getAllDetails);
+router.get('/filters', authenticate, exercisesController.getAllExerciseFilters);
 
 export default router;
 
