@@ -22,24 +22,15 @@ const signup = async (req, res) => {
     throw HttpErr(409, `${email} already in use`);
   }
   const hashPassword = await bcrypt.hash(password, 10);
-  // if (req.file) {
-  //   const { path: oldPath, filename } = req.file;
-  //   const newPath = path.join(posterPath, filename);
-  //   await fs.rename(oldPath, newPath);
-  //   const image = await Jimp.read(newPath);
 
   const avatarURL = gravatar.url(email);
 
-  // await image.writeAsync(newPath);
-  // const avatarURL = path.join("avatar", filename);
   const newUser = await User.create({
     ...req.body,
     avatarURL: `${avatarURL}?s=250`,
     password: hashPassword,
   });
-  // }
 
-  // const newUser = await User.create({ ...req.body, password: hashPassword });
   await Dairy.create({ owner: newUser._id });
 
   const payload = {
@@ -76,27 +67,28 @@ const signin = async (req, res) => {
     id: user._id,
   };
   const token = await jwt.sign(payload, JWT_SECRET);
-  await User.findByIdAndUpdate(user._id, { token }, "-createAt");
+  await User.findByIdAndUpdate(user._id, { token });
 
   res.json({
     user: {
       name: user.name,
       email: user.email,
     },
-     token
+    token,
   });
 };
 const getCurrent = async (req, res) => {
-  const { email, name } = req.user;
+  const { email, name, avatarURL } = req.user;
 
   res.json({
     name,
     email,
+    avatarURL,
   });
 };
 
 const updateAvatar = async (req, res) => {
-  const { email } = req.user;
+  const { _id } = req.user;
 
   const { path: oldPath, filename } = req.file;
 
@@ -108,8 +100,8 @@ const updateAvatar = async (req, res) => {
   image.resize(250, 250);
   await image.writeAsync(newPath);
 
-  const avatarURL = path.join("avatar", filename);
-  await User.findByIdAndUpdate({ email }, { avatarURL }, { new: true });
+  const avatarURL = path.join("/avatars", filename);
+  await User.findByIdAndUpdate(_id, { avatarURL }, { new: true });
 
   res.status(200).json({
     avatarURL,

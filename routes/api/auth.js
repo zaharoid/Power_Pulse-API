@@ -42,6 +42,7 @@ authRouter.post("/logout", authenticate, authController.logout);
 authRouter.patch(
   "/info",
   authenticate,
+  isEmptyBody,
   userUpdateValidate,
   authController.updateUserInfo
 );

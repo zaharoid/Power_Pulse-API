@@ -11,39 +11,30 @@ const productsCategoryPath = path.resolve(
 );
 
 const getAllCategoryProducts = async (req, res) => {
-  try {
-    // Чтение файла JSON
-    const data = await fs.readFile(productsCategoryPath, "utf8");
-    const products = JSON.parse(data);
+  // Чтение файла JSON
+  const data = await fs.readFile(productsCategoryPath, "utf8");
+  const products = JSON.parse(data);
 
-    if (!products || products.length === 0) {
-      throw new HttpErr(404);
-    }
-
-    res.json(products);
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
+  res.json(products);
 };
 
 const getAllProducts = async (req, res) => {
-  try {
-    const keyWord = req.query.keyword;
+  const { keyWord } = req.query;
+
+  if (keyWord) {
     const userBloodGroup = req.user.bloodGroup;
 
     const result = await Products.find({
       title: { $regex: keyWord, $options: "i" },
       recommendedBloodGroups: userBloodGroup,
     });
-    if (!result || result.length === 0) {
-      throw HttpErr(404);
-    }
+
     res.json(result);
-  } catch (error) {
-    console.error(error);
-    next(error);
   }
+
+  const result = await Products.find();
+
+  res.json(result);
 };
 
 export default {

@@ -47,7 +47,7 @@ export const userSigninSchema = Joi.object({
 
 export const userUpdateSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp),
-  name: Joi.string().required(),
+  name: Joi.string(),
 });
 const User = model("user", userSchema);
 
