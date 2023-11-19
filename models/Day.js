@@ -9,7 +9,7 @@ const dayStingSchema = Joi.object({
 })
 
 const dayInfoSchema = Joi.object({
-    date: Joi.date(),
+    date: Joi.string(),
     doneExercises: Joi.object().allow(null),
     products: Joi.object().allow(null),
     burnedCalories: Joi.number().allow(null).min(0),

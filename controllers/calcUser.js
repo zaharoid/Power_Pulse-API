@@ -1,8 +1,12 @@
 import { HttpErr } from "../helpers/index.js";
-import MongusModel, { userCalcSchema } from "../models/calcUser.js";
+import MongusModel, { userCalcSchema, userCalcUpdateSchema } from "../models/calcUser.js";
 import { ctrlWrapper } from "../decorators/index.js";
 
 const add = async (req, res) => {
+  const { error } = userCalcSchema.validate(req.body);
+    if (error) {
+      throw HttpErr(400, error.message);
+    }
   const { _id: owner } = req.user;
   const result = await MongusModel.create({ ...req.body, owner });
   res.status(201).json(result);
@@ -55,7 +59,7 @@ const calculateCalories = async (req, res) => {
 };
 const updateById = async (req, res, next) => {
   try {
-    const { error } = userCalcSchema.validate(req.body);
+    const { error } = userCalcUpdateSchema.validate(req.body);
     if (error) {
       throw HttpErr(400, error.message);
     }
@@ -72,7 +76,6 @@ const updateById = async (req, res, next) => {
 };
 
 export default {
-  schow: ctrlWrapper(schow),
   add: ctrlWrapper(add),
   calculateCalories: ctrlWrapper(calculateCalories),
   updateById: ctrlWrapper(updateById),
