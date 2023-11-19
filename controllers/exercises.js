@@ -3,7 +3,6 @@ import { ctrlWrapper } from "../decorators/index.js";
 import Exercise from "../models/Exercise.js";
 import ExerciseFilter from "../models/ExerciseFilter.js";
 
-
 const getAllExercises = async (req, res) => {
   const r = await Exercise.find({});
   res.json(r);
@@ -18,8 +17,7 @@ const getAllDetails = async (req, res) => {
   allExercises.forEach((exercise) => {
     if (!bodyParts.includes(exercise.bodyPart))
       bodyParts.push(exercise.bodyPart);
-    if (!targets.includes(exercise.target))
-      targets.push(exercise.target);
+    if (!targets.includes(exercise.target)) targets.push(exercise.target);
     if (!equipments.includes(exercise.equipment))
       equipments.push(exercise.equipment);
   });
@@ -27,11 +25,11 @@ const getAllDetails = async (req, res) => {
 };
 
 const getAllExerciseFilters = async (req, res) => {
-  const { type } = req.query;
-  if (!type) {
-    throw HttpErr(400);
-  }
-  const r = await ExerciseFilter.find({filter: type});
+  // const { type } = req.query;
+  // if (!type) {
+  //   throw HttpErr(400);
+  // }
+  const r = await ExerciseFilter.find();
   res.json(r);
 };
 
