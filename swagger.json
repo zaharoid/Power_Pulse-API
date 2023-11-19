@@ -36,7 +36,6 @@
         "tags": ["Auth"],
         "summary": "User registration",
         "parameters": [],
-        "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "User registration object",
           "required": true,
@@ -70,7 +69,6 @@
         "tags": ["Auth"],
         "summary": "Logs user into the system",
         "parameters": [],
-        "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "User login object",
           "required": true,
@@ -209,7 +207,12 @@
       "get": {
         "tags": ["Products"],
         "summary": "Get list of products",
-        "parameters": [],
+        "parameters": [
+          {
+            "in":"query",
+            "name": "keyWord",
+            "required":false
+        }],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
@@ -272,7 +275,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                    "$ref": "#/components/schemas/Day"
+                    "$ref": "#/components/schemas/Diary"
                 }
               }
             }
@@ -366,7 +369,8 @@
           {
             "in":"query",
             "name": "type",
-            "required":true
+            "required":true,
+            "description": "Accessible types - 'Muscles', 'Body parts', 'Equipment'"
         }],
         "security": [{ "Bearer": [] }],
         "responses": {
@@ -494,6 +498,10 @@
           "email": {
             "type": "string",
             "example": "exampleEmail@mail.com"
+          },
+          "avatarURL": {
+            "type": "string",
+            "example": "//www.gravatar.com/avatar/6bf1c3e37665abb9a1e0e3f81796c87c?s=2503"
           }
         }
       },
@@ -517,11 +525,11 @@
           },
           "weight": {
             "type": "number",
-            "example": "upper legs"
+            "example": 100
           },
           "calories": {
             "type": "number",
-            "example": "assisted"
+            "example": 112
           },
           "category": {
             "type": "string",
@@ -624,17 +632,40 @@
           }
         }
       },
+      "Diary": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "699944fb56a0aaa8eb05555"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref":"#/components/schemas/Day"
+            }
+          }
+        }
+      },
       "Day": {
         "type": "object",
         "properties": {
-          "data": {
+          "date": {
             "type": "string",
             "example": "23.09.2023"
           },
           "doneExercises": {
             "type": "array",
             "items": {
-              "$ref":"#/components/schemas/Exercise"
+              "type":"object",
+              "properties":{
+                "exercise": {
+                  "$ref":"#/components/schemas/Exercise"},
+                "time":{
+                  "type": "string",
+                  "example": 10
+                }
+              }
             }
           },
           "products": {

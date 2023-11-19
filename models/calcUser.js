@@ -46,7 +46,7 @@ const calcUserSchema = new Schema({
   owner: {
     type: Schema.Types.ObjectId,
     ref: 'user', 
-    require: true,
+    required: true,
   },
 });
 
@@ -74,8 +74,22 @@ export const userCalcSchema = Joi.object({
     levelActivity: Joi.number().valid(1, 2, 3, 4, 5).required(),
 })
 
+export const userCalcUpdateSchema = Joi.object({
+    height: Joi.number().min(150),
+    currentWeight: Joi.number().min(35),
+    desiredWeight: Joi.number().min(35),
+    birthday: Joi.date().max('now').iso().custom((value, helpers) => {
+        const age = new Date().getFullYear() - new Date(value).getFullYear();
+        if (age < 18) {
+            return helpers.message('Користувач повинен бути старше 18 років');
+        }
+        return value;
+    }),
+    blood: Joi.number().valid(1, 2, 3, 4),
+    sex: Joi.string().valid('male', 'female'),
+    levelActivity: Joi.number().valid(1, 2, 3, 4, 5),
+})
+
 const MongusModel = model('calculate', calcUserSchema);
 
 export default MongusModel;
-
-
