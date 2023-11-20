@@ -14,7 +14,7 @@
 //   },
 // };
 
-//   dairy: {
+//   diary: {
 //     id: _id
 //     owner: user._id,
 //     products: [{ id,
@@ -29,3 +29,9 @@
 // }],
 //     exercises: [{ id }, { id }, { id }],
 //   },
+
+
+TODO swagger 
+change user calc data
+diary
+rename routes for user

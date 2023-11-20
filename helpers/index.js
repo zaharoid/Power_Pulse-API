@@ -1,1 +1,2 @@
 export {default as HttpErr} from "./HttpErr.js";
+export {default as createNewDay} from "./createNewDay.js";

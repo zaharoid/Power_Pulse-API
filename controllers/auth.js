@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import { HttpErr } from "../helpers/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
-import Dairy from "../models/Dairy.js";
+import Diary from "../models/Diary.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -31,7 +31,7 @@ const signup = async (req, res) => {
     password: hashPassword,
   });
 
-  await Dairy.create({ owner: newUser._id });
+  await Diary.create({ owner: newUser._id });
 
   const payload = {
     id: newUser._id,
