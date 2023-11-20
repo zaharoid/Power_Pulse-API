@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 import Joi from "joi";
 import { handleSaveError, runValidatorsAtUpdate } from "./hooks.js";
+import moment from "moment";
 const UserCalculates = new Schema({
   height: {
     type: Number,
@@ -46,6 +47,7 @@ const UserCalculates = new Schema({
     type: Schema.Types.ObjectId,
     required: true,
     ref: "user",
+    unique: true,
   },
 });
 

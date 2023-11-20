@@ -6,15 +6,10 @@ import { isEmptyBody, authenticate, upload } from "../../middlewares/index.js";
 
 import { validateBody } from "../../decorators/index.js";
 
-import {
-  userSignupSchema,
-  userSigninSchema,
-  userUpdateSchema,
-} from "../../models/User.js";
+import { userSignupSchema, userSigninSchema } from "../../models/User.js";
 
 const userSignupValidate = validateBody(userSignupSchema);
 const userSigninValidate = validateBody(userSigninSchema);
-const userUpdateValidate = validateBody(userUpdateSchema);
 
 const authRouter = express.Router();
 
@@ -31,21 +26,8 @@ authRouter.post(
   userSigninValidate,
   authController.signin
 );
-authRouter.patch(
-  "/avatar",
-  authenticate,
-  upload.single("avatar"),
-  authController.updateAvatar
-);
-authRouter.post("/logout", authenticate, authController.logout);
 
-authRouter.patch(
-  "/info",
-  authenticate,
-  isEmptyBody,
-  userUpdateValidate,
-  authController.updateUserInfo
-);
+authRouter.post("/logout", authenticate, authController.logout);
 
 authRouter.post(
   "/avatar",

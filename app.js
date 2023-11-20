@@ -26,7 +26,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/exercises", exercisesRouter);
 app.use("/api/diary", diaryRouter);
-app.use("/api/userData", userDataRouter);
+app.use("/api/user", userDataRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });

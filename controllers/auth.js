@@ -5,16 +5,12 @@ import Diary from "../models/Diary.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import Jimp from "jimp";
 import gravatar from "gravatar";
-import path from "path";
 import fs from "fs/promises";
 
 dotenv.config();
 
 const { JWT_SECRET } = process.env;
-
-const posterPath = path.resolve("public", "avatars");
 
 const signup = async (req, res) => {
   const { email, password } = req.body;
@@ -88,27 +84,6 @@ const getCurrent = async (req, res) => {
   });
 };
 
-const updateAvatar = async (req, res) => {
-  const { _id } = req.user;
-
-  const { path: oldPath, filename } = req.file;
-
-  const newPath = path.join(posterPath, filename);
-
-  await fs.rename(oldPath, newPath);
-
-  const image = await Jimp.read(newPath);
-  image.resize(250, 250);
-  await image.writeAsync(newPath);
-
-  const avatarURL = path.join("/avatars", filename);
-  await User.findByIdAndUpdate(_id, { avatarURL }, { new: true });
-
-  res.status(200).json({
-    avatarURL,
-  });
-};
-
 const logout = async (req, res) => {
   const { _id } = req.user;
 
@@ -152,7 +127,6 @@ export default {
   signin: ctrlWrapper(signin),
   getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
-  updateAvatar: ctrlWrapper(updateAvatar),
   updateUserInfo: ctrlWrapper(updateUserInfo),
   addAvatar: ctrlWrapper(addAvatar),
 };
