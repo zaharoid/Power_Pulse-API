@@ -1,7 +1,13 @@
 import mongoose from 'mongoose';
+import { Schema } from 'mongoose';
+// import {exerciseSchema} from "./Exercise.js"
 
 const exerciseSchema = new mongoose.Schema({
-    id: String,
+    id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'exercise',
+    },
     time: Number,
 }, {_id: false,});
 
@@ -17,14 +23,14 @@ const daySchema = new mongoose.Schema({
     products: [productsSchema],
 }, {_id: false,});
 
-const DairySchema = new mongoose.Schema({
+const DiarySchema = new mongoose.Schema({
     owner: {
-        type: String, // ID владельца
+        type: Schema.Types.ObjectId,
         required: true,
         unique: true
     },
     data: [daySchema]
 })
 
-const Dairy = mongoose.model("diaries", DairySchema);
-export default Dairy;
+const Diary = mongoose.model("diary", DiarySchema);
+export default Diary;

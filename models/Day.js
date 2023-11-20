@@ -1,27 +1,33 @@
 import Joi from "joi";
 
-const daySchema = Joi.object({
-    date: Joi.date().required(),
+const dateSchema = Joi.object({
+    date: Joi.string().regex(/^\d{2}\.\d{2}\.\d{4}$/).length(10).required()
 });
 
-const dayStingSchema = Joi.object({
-    date: Joi.string().regex(/^\d{2}\.\d{2}\.\d{4}$/).length(10).required()
+
+
+const addExerciseSchema = Joi.object({
+    date: Joi.string(),
+    doneExercises: Joi.object({
+        id: Joi.string().length(24).required(),
+        time: Joi.number().required()
+    }),
 })
 
-const dayInfoSchema = Joi.object({
+const addProductSchema = Joi.object({
     date: Joi.string(),
-    doneExercises: Joi.object().allow(null),
-    products: Joi.object().allow(null),
-    burnedCalories: Joi.number().allow(null).min(0),
-    sportTime: Joi.number().allow(null).min(0),
+    products: Joi.object({
+        id: Joi.string().length(24).required(),
+        weight: Joi.number().required()
+    }),
 })
 
 const deleteSchema = Joi.object({
-    id: Joi.string(),
-    date: Joi.string().regex(/^\d{2}\.\d{2}\.\d{4}$/).length(10)
+    id: Joi.string().length(24).required(),
+    date: Joi.string().regex(/^\d{2}\.\d{2}\.\d{4}$/).length(10).required()
 })
 
-export { daySchema, dayInfoSchema, dayStingSchema, deleteSchema };
+export { dateSchema, addExerciseSchema, addProductSchema, deleteSchema };
 
 /*
 day{

@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const exerciseSchema = new Schema({
+export const exerciseSchema = new Schema({
   bodyPart: {
     type: String,
     required: true,

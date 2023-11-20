@@ -18,8 +18,8 @@
       "description": "Authorization endpoints"
     },
     {
-      "name": "Dairy",
-      "description": "Dairy endpoints"
+      "name": "Diary",
+      "description": "Diary endpoints"
     },
     {
       "name": "Exercises",
@@ -263,10 +263,10 @@
         }
       }
     },
-    "/dairy/getInfo": {
+    "/diary/getInfo": {
       "post": {
-        "tags": ["Dairy"],
-        "summary": "Get day info in dairy for user",
+        "tags": ["Diary"],
+        "summary": "Get day info in diary for user",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
@@ -286,10 +286,10 @@
         }
       }
     },
-    "/dairy/addExercise": {
+    "/diary/addExercise": {
       "patch": {
-        "tags": ["Dairy"],
-        "summary": "Add exercise in dairy for user",
+        "tags": ["Diary"],
+        "summary": "Add exercise in diary for user",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
@@ -365,13 +365,6 @@
       "get": {
         "tags": ["Exercises"],
         "summary": "Get list of filter for exercise",
-        "parameters": [
-          {
-            "in":"query",
-            "name": "type",
-            "required":true,
-            "description": "Accessible types - 'Muscles', 'Body parts', 'Equipment'"
-        }],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
@@ -386,9 +379,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad request"
           },
           "401": {
             "description": "Unauthorized"
@@ -566,7 +556,7 @@
         "type": "array",
         "items": {
           "type": "string",
-          "example": "'cereals', 'dairy', 'dried fruits'"
+          "example": "'cereals', 'diary', 'dried fruits'"
         }
       },
       "Exercise": {
@@ -690,7 +680,6 @@
           "name": {
             "type": "string",
             "example": "abductors"
-            
           },
           "imgURL": {
             "type": "string",
