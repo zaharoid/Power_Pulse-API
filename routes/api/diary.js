@@ -1,9 +1,13 @@
 import express from "express";
 import diaryCtrl from "../../controllers/diary.js";
 import { validateBody } from "../../decorators/index.js";
-import { dateSchema, addExerciseSchema, addProductSchema, deleteSchema } from "../../models/Day.js";
-import { authenticate, isEmptyBody }  from "../../middlewares/index.js";
-
+import {
+  dateSchema,
+  addExerciseSchema,
+  addProductSchema,
+  deleteSchema,
+} from "../../models/Day.js";
+import { authenticate, isEmptyBody } from "../../middlewares/index.js";
 
 const dateSchemaValidate = validateBody(dateSchema);
 const addExerciseSchemaValidate = validateBody(addExerciseSchema);
@@ -13,43 +17,43 @@ const deleteSchemaValidate = validateBody(deleteSchema);
 const diaryRouter = express.Router();
 
 diaryRouter.get(
-    "/day",
-    authenticate,
-    isEmptyBody,
-    dateSchemaValidate,
-    diaryCtrl.getInfo
-)
+  "/day",
+  authenticate,
+  isEmptyBody,
+  dateSchemaValidate,
+  diaryCtrl.getInfo
+);
 
 diaryRouter.patch(
-    "/exercise",
-    authenticate,
-    isEmptyBody,
-    
-    diaryCtrl.addExercise
-)
+  "/exercise",
+  authenticate,
+  isEmptyBody,
+  addExerciseSchemaValidate,
+  diaryCtrl.addExercise
+);
 
 diaryRouter.patch(
-    "/product",
-    authenticate,
-    isEmptyBody,
-    addProductSchemaValidate,
-    diaryCtrl.addProduct
+  "/product",
+  authenticate,
+  isEmptyBody,
+  addProductSchemaValidate,
+  diaryCtrl.addProduct
 );
 
 diaryRouter.delete(
-    "/exercise",
-    authenticate,
-    isEmptyBody,
-    deleteSchemaValidate,
-    diaryCtrl.deleteExerciseById
-)
+  "/exercise",
+  authenticate,
+  isEmptyBody,
+  deleteSchemaValidate,
+  diaryCtrl.deleteExerciseById
+);
 
 diaryRouter.delete(
-    "/product",
-    authenticate,
-    isEmptyBody,
-    deleteSchemaValidate,
-    diaryCtrl.deleteProductById
-)
+  "/product",
+  authenticate,
+  isEmptyBody,
+  deleteSchemaValidate,
+  diaryCtrl.deleteProductById
+);
 
 export default diaryRouter;

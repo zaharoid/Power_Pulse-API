@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const productSchema = new Schema(
+export const productSchema = new Schema(
   {
     weight: {
       type: Number,
@@ -26,6 +26,5 @@ const productSchema = new Schema(
 );
 
 const Products = model("product", productSchema);
-
 
 export default Products;

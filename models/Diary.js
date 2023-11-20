@@ -1,36 +1,58 @@
-import mongoose from 'mongoose';
-import { Schema } from 'mongoose';
-// import {exerciseSchema} from "./Exercise.js"
+// import { array } from "joi";
+import { Schema, model } from "mongoose";
+// import { exerciseSchema } from "./Exercise.js";
+// import { productSchema } from "./Product.js";
 
-const exerciseSchema = new mongoose.Schema({
-    id: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: 'exercise',
+const exerciseSchema = new Schema(
+  {
+    exercise: {
+      type: Schema.Types.ObjectId,
+      ref: "exercise",
+      require: true,
     },
-    time: Number,
-}, {_id: false,});
-
-const productsSchema = new mongoose.Schema({
-    id: String,
-    weight: Number,
-}, {_id: false,});
-
-
-const daySchema = new mongoose.Schema({
-    date: String,
-    doneExercises: [exerciseSchema],
-    products: [productsSchema],
-}, {_id: false,});
-
-const DiarySchema = new mongoose.Schema({
-    owner: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        unique: true
+    time: {
+      type: Number,
+      require: true,
     },
-    data: [daySchema]
-})
+  },
+  { _id: false }
+);
 
-const Diary = mongoose.model("diary", DiarySchema);
+const productSchema = new Schema(
+  {
+    product: {
+      type: Schema.Types.ObjectId,
+      ref: "product",
+      require: true,
+    },
+    weight: {
+      type: Number,
+      require: true,
+    },
+  },
+  { _id: false }
+);
+
+const daySchema = new Schema(
+  {
+    date: {
+      type: String,
+      require: true,
+    },
+    exercises: [exerciseSchema],
+    products: [productSchema],
+  },
+  { _id: false }
+);
+
+const diarySchema = new Schema({
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "user",
+    require: true,
+  },
+  days: [daySchema],
+});
+
+const Diary = model("diary", diarySchema);
 export default Diary;
