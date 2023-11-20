@@ -25,7 +25,7 @@ diaryRouter.get(
 );
 
 diaryRouter.patch(
-  "/exercise",
+  "/exercise/:exerciseId",
   authenticate,
   isEmptyBody,
   addExerciseSchemaValidate,
@@ -33,7 +33,7 @@ diaryRouter.patch(
 );
 
 diaryRouter.patch(
-  "/product",
+  "/product/:productId",
   authenticate,
   isEmptyBody,
   addProductSchemaValidate,
@@ -41,7 +41,7 @@ diaryRouter.patch(
 );
 
 diaryRouter.delete(
-  "/exercise",
+  "/exercise/:exerciseId",
   authenticate,
   isEmptyBody,
   deleteSchemaValidate,
@@ -49,7 +49,7 @@ diaryRouter.delete(
 );
 
 diaryRouter.delete(
-  "/product",
+  "/product/:productId",
   authenticate,
   isEmptyBody,
   deleteSchemaValidate,

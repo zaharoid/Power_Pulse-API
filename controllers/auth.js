@@ -1,5 +1,5 @@
 import User from "../models/User.js";
-import { HttpErr } from "../helpers/index.js";
+import { HttpErr, cloudinary } from "../helpers/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
 import Diary from "../models/Diary.js";
 import bcrypt from "bcrypt";
@@ -9,6 +9,7 @@ import Jimp from "jimp";
 import gravatar from "gravatar";
 import path from "path";
 import fs from "fs/promises";
+
 dotenv.config();
 
 const { JWT_SECRET } = process.env;
@@ -129,6 +130,23 @@ const updateUserInfo = async (req, res) => {
     email: user.email,
   });
 };
+
+const addAvatar = async (req, res) => {
+  const { _id } = req.user;
+
+  const { url: avatarURL } = await cloudinary.uploader.upload(req.file.path, {
+    folder: "avatars",
+  });
+
+  await fs.unlink(req.file.path);
+
+  await User.findByIdAndUpdate(_id, { avatarURL });
+
+  res.status(200).json({
+    avatarURL,
+  });
+};
+
 export default {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
@@ -136,4 +154,5 @@ export default {
   logout: ctrlWrapper(logout),
   updateAvatar: ctrlWrapper(updateAvatar),
   updateUserInfo: ctrlWrapper(updateUserInfo),
+  addAvatar: ctrlWrapper(addAvatar),
 };

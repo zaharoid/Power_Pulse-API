@@ -47,4 +47,11 @@ authRouter.patch(
   authController.updateUserInfo
 );
 
+authRouter.post(
+  "/avatar",
+  authenticate,
+  upload.single("avatar"),
+  authController.addAvatar
+);
+
 export default authRouter;

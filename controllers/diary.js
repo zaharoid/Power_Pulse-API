@@ -9,18 +9,21 @@ const addExercise = async (req, res) => {
   const usersDiary = await Diary.findOne({ owner: userId });
 
   const formattedDate = moment().format("DD.MM.YYYY");
-  const existingDay = await Diary.findOne({
+  const existingDiary = await Diary.findOne({
     owner: userId,
     "days.date": formattedDate,
   });
 
-  if (existingDay) {
-    const exerciseId = req.body.exercises.id;
-    const existingExercise = existingDay.data
+  if (existingDiary) {
+    const { exerciseId } = req.body;
+
+    const existingExercise = existingDiary.days
       .find((entry) => entry.date === formattedDate)
-      .doneExercises.find((exercise) => exercise.id === exerciseId);
+      .exercises.find((exercise) => exercise.id === exerciseId);
 
     if (existingExercise) {
+      console.log(existingExercise);
+
       await Diary.findOneAndUpdate(
         { owner: userId, "days.date": formattedDate },
         {
@@ -40,6 +43,7 @@ const addExercise = async (req, res) => {
 
       return res.status(200).json({ message: "Update successful" });
     }
+
     await Diary.findOneAndUpdate(
       { owner: userId, "days.date": formattedDate },
       { $push: { "days.$.exercises": { ...req.body.exercises } } },

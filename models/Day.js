@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { Schema } from "mongoose";
 
 const dateSchema = Joi.object({
   date: Joi.string()
@@ -10,7 +11,6 @@ const dateSchema = Joi.object({
 const addExerciseSchema = Joi.object({
   date: Joi.string(),
   exercises: Joi.object({
-    exercise: Joi.string().length(24).required(),
     time: Joi.number().required(),
   }),
 });
@@ -24,7 +24,7 @@ const addProductSchema = Joi.object({
 });
 
 const deleteSchema = Joi.object({
-  id: Joi.string().length(24).required(),
+  // id: Joi.string().length(24).required(),
   date: Joi.string()
     .regex(/^\d{2}\.\d{2}\.\d{4}$/)
     .length(10)

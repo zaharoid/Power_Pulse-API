@@ -11,7 +11,7 @@ export const productSchema = new Schema(
       required: true,
     },
     category: {
-      type: Number,
+      type: String,
       required: true,
     },
     title: {

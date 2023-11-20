@@ -4,13 +4,13 @@ import cors from "cors";
 
 import authRouter from "./routes/api/auth.js";
 import productsRouter from "./routes/api/products.js";
+import diaryRouter from "./routes/api/diary.js";
+import exercisesRouter from "./routes/api/exercises.js";
+import userDataRouter from "./routes/api/userData.js";
 
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "./swagger.json" assert { type: "json" };
 import "dotenv/config";
-
-import { default as exercisesRouter } from ".//routes/api/exercises.js";
-import diaryRouter from "./routes/api/diary.js";
 
 const app = express();
 
@@ -26,6 +26,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/exercises", exercisesRouter);
 app.use("/api/diary", diaryRouter);
+app.use("/api/userData", userDataRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
