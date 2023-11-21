@@ -66,11 +66,11 @@ const calculateCalories = async (req, res) => {
 };
 const updateById = async (req, res) => {
   const { _id: owner } = req.user;
-  let result = await UserData.findOneAndUpdate({ owner }, req.body);
+  const result = await UserData.findOneAndUpdate({ owner }, req.body);
   console.log(result);
 
   if (!result) {
-    result = [];
+    throw HttpErr(400, "Calculations is empty");
   }
   res.json(result);
 };

@@ -1,5 +1,5 @@
-import moment from "moment";
 import Diary from "../models/Diary.js";
+import Exercise from "../models/Exercise.js";
 
 const createNewDay = async (
   req,
@@ -9,6 +9,8 @@ const createNewDay = async (
 ) => {
   const { time, weight, date } = req.body;
   const { id } = req.params;
+
+  const exercise = await Exercise.find;
 
   const newDay = req.body.time
     ? {

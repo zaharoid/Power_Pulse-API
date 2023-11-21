@@ -67,18 +67,33 @@ const signin = async (req, res) => {
   const token = await jwt.sign(payload, JWT_SECRET);
   await User.findByIdAndUpdate(user._id, { token });
 
+  let userInfo;
+
+  userInfo = await UserData.findOne({ owner: user._id });
+
+  if (!userInfo) {
+    userInfo = {};
+  }
+
   res.json({
-    user: {
+    userData: {
       name: user.name,
       email: user.email,
     },
     token,
+    userInfo,
   });
 };
 const getCurrent = async (req, res) => {
   const { email, name, avatarURL, _id: owner } = req.user;
 
-  const userInfo = await UserData.findOne({ owner });
+  let userInfo;
+
+  userInfo = await UserData.findOne({ owner });
+
+  if (!userInfo) {
+    userInfo = {};
+  }
 
   res.json({
     userData: {
