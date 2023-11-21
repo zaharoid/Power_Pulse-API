@@ -43,7 +43,6 @@ const calculateCalories = async (req, res) => {
     5: 1.9,
   };
   const activityCoefficient = activityCoefficients[levelActivity];
-  console.log(new Date().getFullYear() - new Date(birthday).getFullYear());
   const isMale = sex === "male";
   const baseMetabolicRate = isMale
     ? (10 * currentWeight +

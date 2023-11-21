@@ -33,6 +33,10 @@ const productSchema = new Schema(
       type: Number,
       required: true,
     },
+    consumedCalories: {
+      type: Number,
+      required: true,
+    },
   },
   { _id: false }
 );

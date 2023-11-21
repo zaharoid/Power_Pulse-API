@@ -1,7 +1,12 @@
 import moment from "moment";
 import Diary from "../models/Diary.js";
 
-const createNewDay = async (req, usersDiary, burnedCalories) => {
+const createNewDay = async (
+  req,
+  usersDiary,
+  burnedCalories,
+  consumedCalories
+) => {
   const { time, weight, date } = req.body;
   const { id } = req.params;
 
@@ -12,7 +17,7 @@ const createNewDay = async (req, usersDiary, burnedCalories) => {
       }
     : {
         date,
-        products: [{ weight, product: id }],
+        products: [{ weight, product: id, consumedCalories }],
       };
 
   await Diary.findByIdAndUpdate(
