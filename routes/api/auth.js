@@ -20,7 +20,7 @@ authRouter.post(
   userSignupValidate,
   authController.signup
 );
-// authRouter.get("/verify/:verificationCode", authController.verifyEmail);
+authRouter.get("/verify/:verificationCode", authController.verifyEmail);
 authRouter.post(
   "/signin",
   isEmptyBody,

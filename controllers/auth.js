@@ -30,6 +30,7 @@ const signup = async (req, res) => {
     password: hashPassword,
     verificationCode
   });
+
  const verifyEmail = {
   to: email,subject: "Verify email",
   html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${verificationCode}"> Click verify email</a>`
@@ -56,9 +57,24 @@ const signup = async (req, res) => {
   });
 };
 
+const verifyEmail = async(req, res) =>{
+  const {verificationCode} = req.params;
+  const user = await User.findOne({verificationCode});
+  if(!user){
+    throw HttpErr(401, "Email not found")
+  }
+  await User.findByIdAndUpdate(user._id, {verify: true, verificationCode: ""});
+  res.json({
+    message: "Email verify success"
+  })
+}
+
 const signin = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
+  if(!user.verify){
+    throw HttpErr(401, "Email not verify")
+  }
   if (!user) {
     throw HttpErr(401, "Email or password invalid");
   }
@@ -137,4 +153,5 @@ export default {
   logout: ctrlWrapper(logout),
   updateUserInfo: ctrlWrapper(updateUserInfo),
   addAvatar: ctrlWrapper(addAvatar),
+  verifyEmail: ctrlWrapper(verifyEmail),
 };
