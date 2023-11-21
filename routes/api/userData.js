@@ -20,8 +20,9 @@ userDataRouter.post(
   userStatSchemaValidate,
   userDataController.add
 );
-userDataRouter.put(
+userDataRouter.patch(
   "/",
+  isEmptyBody,
   authenticate,
   userStatUpdateSchemaValidate,
   userDataController.updateById

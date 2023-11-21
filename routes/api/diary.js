@@ -16,16 +16,10 @@ const deleteSchemaValidate = validateBody(deleteSchema);
 
 const diaryRouter = express.Router();
 
-diaryRouter.get(
-  "/day",
-  authenticate,
-  isEmptyBody,
-  dateSchemaValidate,
-  diaryCtrl.getInfo
-);
+diaryRouter.get("/day", authenticate, diaryCtrl.getInfo);
 
 diaryRouter.patch(
-  "/exercise/:exerciseId",
+  "/exercise/:id",
   authenticate,
   isEmptyBody,
   addExerciseSchemaValidate,
@@ -33,7 +27,7 @@ diaryRouter.patch(
 );
 
 diaryRouter.patch(
-  "/product/:productId",
+  "/product/:id",
   authenticate,
   isEmptyBody,
   addProductSchemaValidate,
@@ -41,7 +35,7 @@ diaryRouter.patch(
 );
 
 diaryRouter.delete(
-  "/exercise/:exerciseId",
+  "/exercise/:id",
   authenticate,
   isEmptyBody,
   deleteSchemaValidate,
@@ -49,7 +43,7 @@ diaryRouter.delete(
 );
 
 diaryRouter.delete(
-  "/product/:productId",
+  "/product/:id",
   authenticate,
   isEmptyBody,
   deleteSchemaValidate,

@@ -18,6 +18,10 @@
       "description": "Authorization endpoints"
     },
     {
+      "name": "User",
+      "description": "User endpoints"
+    },
+    {
       "name": "Diary",
       "description": "Diary endpoints"
     },
@@ -152,7 +156,8 @@
                 "format": "binary"
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "200": {
@@ -171,10 +176,115 @@
         }
       }
     },
-    "/auth/info": {
+
+    "/user": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get user parameters",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "dailyCalories": {
+                      "type": "number",
+                      "example": 4213
+                    },
+                    "dailyExerciseTime": {
+                      "type": "number",
+                      "example": 110
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized"
+          },
+           "400": {
+            "description": "Calculations is empty"
+          }
+        }
+      },
       "patch": {
-        "tags": ["Auth"],
-        "summary": "Updates user`s information",
+        "tags": ["User"],
+        "summary": "Update user parameters",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserParametersInfo"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserParametersInfo"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized"
+          },
+          "400": {
+            "description": "Calculations is empty"
+          }
+        }
+      },
+      "post": {
+        "tags": ["User"],
+        "summary": "Create user parameters",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserParametersInfoRequired"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserParametersInfo"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized"
+          },
+          "400": {
+            "description": "User's data already exist."
+          }
+        }
+      }
+    },
+        "/user/info": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "Updates user`s email or/and name",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
@@ -184,7 +294,8 @@
                 "$ref": "#/components/schemas/UserInfo"
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "200": {
@@ -203,16 +314,18 @@
         }
       }
     },
+
     "/products": {
       "get": {
         "tags": ["Products"],
         "summary": "Get list of products",
         "parameters": [
           {
-            "in":"query",
+            "in": "query",
             "name": "keyWord",
-            "required":false
-        }],
+            "required": false
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
@@ -275,7 +388,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                    "$ref": "#/components/schemas/Diary"
+                  "$ref": "#/components/schemas/Diary"
                 }
               }
             }
@@ -391,7 +504,7 @@
     "schemas": {
       "RegistrationRequest": {
         "type": "object",
-        "required": ["email", "password"],
+        "required": ["email", "password", "name"],
         "properties": {
           "name": {
             "type": "string",
@@ -497,12 +610,86 @@
       },
       "UserInfo": {
         "type": "object",
-        "required": ["email", "password"],
         "properties": {
           "name": { "type": "string", "example": "Changed Username" },
           "email": {
             "type": "string",
-            "example": "exampleEmail@mail.com"
+            "example": "changedExampleEmail@mail.com"
+          }
+        }
+      },
+      "UserParametersInfo": {
+        "type": "object",
+        "properties": {
+          "height": {
+            "type": "number",
+            "example": 189
+          },
+          "currentWeight": {
+            "type": "number",
+            "example": 78
+          },
+          "desiredWeight": {
+            "type": "number",
+            "example": 70
+          },
+          "birthday": {
+            "type": "string",
+            "example": "2000-01-01"
+          },
+          "blood": {
+            "type": "number",
+            "enum": [1, 2, 3, 4]
+          },
+          "sex": {
+            "type": "number",
+            "enum": ["male", "female"]
+          },
+          "levelActivity": {
+            "type": "number",
+            "enum": [1, 2, 3, 4, 5]
+          }
+        }
+      },
+      "UserParametersInfoRequired": {
+        "type": "object",
+        "required": [
+          "height",
+          "currentWeight",
+          "desiredWeight",
+          "birthday",
+          "blood",
+          "sex",
+          "levelActivity"
+        ],
+        "properties": {
+          "height": {
+            "type": "number",
+            "example": 189
+          },
+          "currentWeight": {
+            "type": "number",
+            "example": 78
+          },
+          "desiredWeight": {
+            "type": "number",
+            "example": 70
+          },
+          "birthday": {
+            "type": "string",
+            "example": "2000-01-01"
+          },
+          "blood": {
+            "type": "number",
+            "enum": [1, 2, 3, 4]
+          },
+          "sex": {
+            "type": "number",
+            "enum": ["male", "female"]
+          },
+          "levelActivity": {
+            "type": "number",
+            "enum": [1, 2, 3, 4, 5]
           }
         }
       },
@@ -632,7 +819,7 @@
           "data": {
             "type": "array",
             "items": {
-              "$ref":"#/components/schemas/Day"
+              "$ref": "#/components/schemas/Day"
             }
           }
         }
@@ -644,14 +831,15 @@
             "type": "string",
             "example": "23.09.2023"
           },
-          "doneExercises": {
+          "exercises": {
             "type": "array",
             "items": {
-              "type":"object",
-              "properties":{
+              "type": "object",
+              "properties": {
                 "exercise": {
-                  "$ref":"#/components/schemas/Exercise"},
-                "time":{
+                  "$ref": "#/components/schemas/Exercise"
+                },
+                "time": {
                   "type": "string",
                   "example": 10
                 }
@@ -661,7 +849,7 @@
           "products": {
             "type": "array",
             "items": {
-              "$ref":"#/components/schemas/Product"
+              "$ref": "#/components/schemas/Product"
             }
           }
         }
@@ -688,7 +876,7 @@
         }
       }
     },
-    
+
     "securitySchemes": {
       "Bearer": {
         "type": "http",

@@ -9,6 +9,9 @@ import gravatar from "gravatar";
 import fs from "fs/promises";
 import { nanoid } from "nanoid";
 import { send } from "process";
+import UserData from "../models/userData.js";
+
+
 dotenv.config();
 
 const { JWT_SECRET, BASE_URL } = process.env;
@@ -90,21 +93,42 @@ const signin = async (req, res) => {
   const token = await jwt.sign(payload, JWT_SECRET);
   await User.findByIdAndUpdate(user._id, { token });
 
+  let userInfo;
+
+  userInfo = await UserData.findOne({ owner: user._id });
+
+  if (!userInfo) {
+    userInfo = {};
+  }
+
   res.json({
-    user: {
+    userData: {
       name: user.name,
       email: user.email,
     },
     token,
+    userInfo,
   });
 };
 const getCurrent = async (req, res) => {
-  const { email, name, avatarURL } = req.user;
+  const { email, name, avatarURL, _id: owner } = req.user;
+
+  let userInfo;
+
+  userInfo = await UserData.findOne({ owner });
+
+  if (!userInfo) {
+    userInfo = {};
+  }
 
   res.json({
-    name,
-    email,
-    avatarURL,
+    userData: {
+      name,
+      email,
+      avatarURL,
+    },
+
+    userInfo,
   });
 };
 

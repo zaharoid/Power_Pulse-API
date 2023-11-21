@@ -8,11 +8,15 @@ const exerciseSchema = new Schema(
     exercise: {
       type: Schema.Types.ObjectId,
       ref: "exercise",
-      require: true,
+      required: true,
     },
     time: {
       type: Number,
-      require: true,
+      required: true,
+    },
+    burnedCalories: {
+      type: Number,
+      required: true,
     },
   },
   { _id: false }
@@ -23,11 +27,15 @@ const productSchema = new Schema(
     product: {
       type: Schema.Types.ObjectId,
       ref: "product",
-      require: true,
+      required: true,
     },
     weight: {
       type: Number,
-      require: true,
+      required: true,
+    },
+    consumedCalories: {
+      type: Number,
+      required: true,
     },
   },
   { _id: false }
@@ -37,7 +45,7 @@ const daySchema = new Schema(
   {
     date: {
       type: String,
-      require: true,
+      required: true,
     },
     exercises: [exerciseSchema],
     products: [productSchema],
@@ -49,7 +57,7 @@ const diarySchema = new Schema({
   owner: {
     type: Schema.Types.ObjectId,
     ref: "user",
-    require: true,
+    required: true,
   },
   days: [daySchema],
 });

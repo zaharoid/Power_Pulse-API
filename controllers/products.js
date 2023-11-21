@@ -11,7 +11,6 @@ const productsCategoryPath = path.resolve(
 );
 
 const getAllCategoryProducts = async (req, res) => {
-  // Чтение файла JSON
   const data = await fs.readFile(productsCategoryPath, "utf8");
   const products = JSON.parse(data);
 
@@ -19,20 +18,25 @@ const getAllCategoryProducts = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
-  const { keyWord } = req.query;
+  const { keyWord, blood } = req.query;
+
+  console.log(blood);
 
   if (keyWord) {
-    const userBloodGroup = req.user.bloodGroup;
-
     const result = await Products.find({
       title: { $regex: keyWord, $options: "i" },
-      recommendedBloodGroups: userBloodGroup,
     });
 
     res.json(result);
   }
 
-  const result = await Products.find();
+  if (!blood) {
+    throw HttpErr(400, "User's data doesn't exist");
+  }
+  const result = await Products.find({
+    // "groupBloodNotAllowed.blood",
+    // [1]: false,
+  });
 
   res.json(result);
 };

@@ -8,10 +8,10 @@ import { ctrlWrapper } from "../decorators/index.js";
 const add = async (req, res) => {
   const { _id: owner } = req.user;
 
-  const userData = await UserData.find({ owner });
+  const userData = await UserData.findOne({ owner });
 
   if (userData) {
-    throw HttpErr(400, "User's data already exist.");
+    throw HttpErr(400, "Calculations already exist.");
   }
 
   const result = await UserData.create({ ...req.body, owner });
@@ -23,7 +23,7 @@ const calculateCalories = async (req, res) => {
 
   const calculations = await UserData.find({ owner });
   if (!calculations) {
-    throw HttpErr(400, "Calculations is empty");
+    throw HttpErr(400, "Calculations is empty.");
   }
 
   const {
@@ -43,7 +43,6 @@ const calculateCalories = async (req, res) => {
     5: 1.9,
   };
   const activityCoefficient = activityCoefficients[levelActivity];
-  console.log(new Date().getFullYear() - new Date(birthday).getFullYear());
   const isMale = sex === "male";
   const baseMetabolicRate = isMale
     ? (10 * currentWeight +
@@ -66,12 +65,12 @@ const calculateCalories = async (req, res) => {
   });
 };
 const updateById = async (req, res) => {
-
   const { _id: owner } = req.user;
   const result = await UserData.findOneAndUpdate({ owner }, req.body);
+  console.log(result);
 
   if (!result) {
-    throw HttpErr(400, "Not found");
+    throw HttpErr(400, "Calculations is empty");
   }
   res.json(result);
 };
