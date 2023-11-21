@@ -38,8 +38,6 @@ const addExercise = async (req, res) => {
         {
           $inc: {
             "days.$[dateEntry].exercises.$[exerciseEntry].time": time,
-          },
-          $inc: {
             "days.$[dateEntry].exercises.$[exerciseEntry].burnedCalories":
               burnedCalories,
           },
@@ -78,6 +76,7 @@ const addExercise = async (req, res) => {
 const addProduct = async (req, res) => {
   const { _id: userId } = req.user;
   const { weight, date } = req.body;
+  const burnedCalories = 0;
   const { id } = req.params;
 
   const productToAdd = await Product.findById(id);
@@ -140,7 +139,7 @@ const addProduct = async (req, res) => {
       );
     }
   } else {
-    await createNewDay(req, existingDiary, _, consumedCalories);
+    await createNewDay(req, existingDiary, burnedCalories, consumedCalories);
   }
   return res.status(201).json({ product: id, weight });
 };

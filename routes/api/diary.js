@@ -16,13 +16,7 @@ const deleteSchemaValidate = validateBody(deleteSchema);
 
 const diaryRouter = express.Router();
 
-diaryRouter.get(
-  "/day",
-  authenticate,
-  isEmptyBody,
-  dateSchemaValidate,
-  diaryCtrl.getInfo
-);
+diaryRouter.get("/day", authenticate, diaryCtrl.getInfo);
 
 diaryRouter.patch(
   "/exercise/:id",
