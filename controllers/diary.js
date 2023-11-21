@@ -146,16 +146,22 @@ const addProduct = async (req, res) => {
 };
 
 const getInfoAboutDay = async (req, res) => {
-  const { _id: userId } = req.user;
+  const { _id: owner } = req.user;
+  const { date } = req.query;
+  console.log(date);
+  if (date) {
+    const day = await Diary.findOne(
+      { owner, "days.date": date },
+      { "days.$": 1 }
+    ).populate();
 
-  const dateOfDay = req.body.date;
-  const day = await Diary.findOne(
-    { owner: userId, "days.date": dateOfDay },
-    { "days.$": 1 }
-  ).populate();
+    if (!day) return res.status(200).json({ message: "Day is empty" });
+    return res.status(200).json(day);
+  }
 
-  if (!day) return res.status(200).json({ message: "Day is empty" });
-  return res.status(200).json(day);
+  const diary = await Diary.findOne({ owner });
+
+  return res.status(200).json(diary);
 };
 
 const deleteExerciseById = async (req, res) => {
