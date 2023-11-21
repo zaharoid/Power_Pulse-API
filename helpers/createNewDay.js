@@ -24,7 +24,7 @@ const createNewDay = async (
     usersDiary._id,
     { $push: { days: newDay } },
     { new: true, useFindAndModify: false }
-  );
+  ).populate("days.exercises.exercise");
 };
 
 export default createNewDay;

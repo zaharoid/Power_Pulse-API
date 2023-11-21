@@ -26,7 +26,7 @@ const addExercise = async (req, res) => {
     owner: userId,
     "days.date": date,
   });
-
+  let di;
   if (existingDiaryByDay) {
     const existingExercise = existingDiaryByDay.days
       .find((day) => day.date === date)
@@ -53,8 +53,9 @@ const addExercise = async (req, res) => {
 
       return res.status(200).json({ message: "Update successful" });
     }
-    await Diary.findOneAndUpdate(
+    di = await Diary.findOneAndUpdate(
       { owner: userId, "days.date": date },
+
       {
         $push: {
           "days.$.exercises": {
@@ -64,13 +65,16 @@ const addExercise = async (req, res) => {
           },
         },
       },
+
       { new: true, useFindAndModify: false }
-    );
+    ).populate("days.exercises.exercise");
   } else {
     await createNewDay(req, existingDiary, burnedCalories);
   }
 
-  return res.status(201).json({ id, time, burnedCalories });
+  console.log(di);
+  // return res.status(201).json({ id, time, burnedCalories });
+  return res.status(201).json(di);
 };
 
 const addProduct = async (req, res) => {
@@ -147,12 +151,13 @@ const addProduct = async (req, res) => {
 const getInfoAboutDay = async (req, res) => {
   const { _id: owner } = req.user;
   const { date } = req.query;
-  console.log(date);
   if (date) {
     const day = await Diary.findOne(
       { owner, "days.date": date },
       { "days.$": 1 }
-    ).populate();
+    )
+      .populate("days.exercises.exercise")
+      .populate("days.products.product");
 
     if (!day) return res.status(200).json({ message: "Day is empty" });
     return res.status(200).json(day);
