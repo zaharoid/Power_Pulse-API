@@ -1,5 +1,5 @@
 import User from "../models/User.js";
-import { HttpErr, cloudinary } from "../helpers/index.js";
+import { HttpErr, cloudinary, sendEmail } from "../helpers/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
 import Diary from "../models/Diary.js";
 import bcrypt from "bcrypt";
@@ -7,11 +7,14 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import gravatar from "gravatar";
 import fs from "fs/promises";
+import { nanoid } from "nanoid";
+import { send } from "process";
 import UserData from "../models/userData.js";
+
 
 dotenv.config();
 
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET, BASE_URL } = process.env;
 
 const signup = async (req, res) => {
   const { email, password } = req.body;
@@ -22,12 +25,20 @@ const signup = async (req, res) => {
   const hashPassword = await bcrypt.hash(password, 10);
 
   const avatarURL = gravatar.url(email);
+  const verificationCode = nanoid()
 
   const newUser = await User.create({
     ...req.body,
     avatarURL: `${avatarURL}?s=250`,
     password: hashPassword,
+    verificationCode
   });
+
+ const verifyEmail = {
+  to: email,subject: "Verify email",
+  html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${verificationCode}"> Click verify email</a>`
+ }
+  await sendEmail(verifyEmail);
 
   await Diary.create({ owner: newUser._id });
 
@@ -49,9 +60,24 @@ const signup = async (req, res) => {
   });
 };
 
+const verifyEmail = async(req, res) =>{
+  const {verificationCode} = req.params;
+  const user = await User.findOne({verificationCode});
+  if(!user){
+    throw HttpErr(401, "Email not found")
+  }
+  await User.findByIdAndUpdate(user._id, {verify: true, verificationCode: ""});
+  res.json({
+    message: "Email verify success"
+  })
+}
+
 const signin = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
+  if(!user.verify){
+    throw HttpErr(401, "Email not verify")
+  }
   if (!user) {
     throw HttpErr(401, "Email or password invalid");
   }
@@ -151,4 +177,5 @@ export default {
   logout: ctrlWrapper(logout),
   updateUserInfo: ctrlWrapper(updateUserInfo),
   addAvatar: ctrlWrapper(addAvatar),
+  verifyEmail: ctrlWrapper(verifyEmail),
 };
