@@ -34,7 +34,7 @@ const getAllProducts = async (req, res) => {
     throw HttpErr(400, "User's data doesn't exist");
   }
   const result = await Products.find({
-    // groupBloodNotAllowed,
+    // "groupBloodNotAllowed.blood",
     // [1]: false,
   });
 

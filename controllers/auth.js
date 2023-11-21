@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import gravatar from "gravatar";
 import fs from "fs/promises";
+import UserData from "../models/userData.js";
 
 dotenv.config();
 
@@ -75,12 +76,18 @@ const signin = async (req, res) => {
   });
 };
 const getCurrent = async (req, res) => {
-  const { email, name, avatarURL } = req.user;
+  const { email, name, avatarURL, _id: owner } = req.user;
+
+  const userInfo = await UserData.findOne({ owner });
 
   res.json({
-    name,
-    email,
-    avatarURL,
+    userData: {
+      name,
+      email,
+      avatarURL,
+    },
+
+    userInfo,
   });
 };
 
