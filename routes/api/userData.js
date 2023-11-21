@@ -22,6 +22,7 @@ userDataRouter.post(
 );
 userDataRouter.patch(
   "/",
+  isEmptyBody,
   authenticate,
   userStatUpdateSchemaValidate,
   userDataController.updateById
