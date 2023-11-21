@@ -19,13 +19,12 @@ const addExercise = async (req, res) => {
 
   const burnedCalories = (exerciseToAdd.burnedCalories / 3) * time;
 
-  // const formattedDate = moment().format("DD.MM.YYYY");
   const existingDiary = await Diary.findOne({
     owner: userId,
-    "days.date": formattedDate,
+    "days.date": date,
   });
-
   if (existingDiary) {
+    console.log(1);
     const existingExercise = existingDiary.days
       .find((day) => day.date === date)
       .exercises.find(({ exercise }) => exercise.toString() === id);
@@ -50,7 +49,7 @@ const addExercise = async (req, res) => {
       return res.status(200).json({ message: "Update successful" });
     }
     await Diary.findOneAndUpdate(
-      { owner: userId, "days.date": formattedDate },
+      { owner: userId, "days.date": date },
       {
         $push: {
           "days.$.exercises": {

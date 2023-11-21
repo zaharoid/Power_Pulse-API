@@ -8,10 +8,10 @@ import { ctrlWrapper } from "../decorators/index.js";
 const add = async (req, res) => {
   const { _id: owner } = req.user;
 
-  const userData = await UserData.find({ owner });
+  const userData = await UserData.findOne({ owner });
 
   if (userData) {
-    throw HttpErr(400, "Calculations is empty.");
+    throw HttpErr(400, "Calculations already exist.");
   }
 
   const result = await UserData.create({ ...req.body, owner });
@@ -70,7 +70,7 @@ const updateById = async (req, res) => {
   const result = await UserData.findOneAndUpdate({ owner }, req.body);
 
   if (!result) {
-    throw HttpErr(400, "Not found");
+    throw HttpErr(400, "Calculations is empty");
   }
   res.json(result);
 };
