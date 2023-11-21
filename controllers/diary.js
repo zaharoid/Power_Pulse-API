@@ -1,94 +1,101 @@
 import moment from "moment";
 
 import Diary from "../models/Diary.js";
+import Product from "../models/Product.js";
+import Exercise from "../models/Exercise.js";
 import { ctrlWrapper } from "../decorators/index.js";
-import { createNewDay } from "../helpers/index.js";
+import { HttpErr, createNewDay } from "../helpers/index.js";
 
 const addExercise = async (req, res) => {
   const { _id: userId } = req.user;
-  const usersDiary = await Diary.findOne({ owner: userId });
+  const { id } = req.params;
+  const { time, date } = req.body;
 
-  const formattedDate = moment().format("DD.MM.YYYY");
+  const exerciseToAdd = await Exercise.findById(id);
+
+  if (!exerciseToAdd) {
+    throw HttpErr(400, "Exercise not found.");
+  }
+
+  const burnedCalories = (exerciseToAdd.burnedCalories / 3) * time;
+
+  // const formattedDate = moment().format("DD.MM.YYYY");
   const existingDiary = await Diary.findOne({
     owner: userId,
     "days.date": formattedDate,
   });
 
   if (existingDiary) {
-    const { exerciseId } = req.body;
-
     const existingExercise = existingDiary.days
-      .find((entry) => entry.date === formattedDate)
-      .exercises.find((exercise) => exercise.id === exerciseId);
+      .find((day) => day.date === date)
+      .exercises.find(({ exercise }) => exercise.toString() === id);
 
     if (existingExercise) {
-      console.log(existingExercise);
-
       await Diary.findOneAndUpdate(
-        { owner: userId, "days.date": formattedDate },
+        { owner: userId, "days.date": date },
         {
           $inc: {
-            "days.$[dateEntry].exercises.$[exerciseEntry].time":
-              req.body.exercises.time,
+            "days.$[dateEntry].exercises.$[exerciseEntry].time": time,
           },
         },
         {
           new: true,
           arrayFilters: [
-            { "dateEntry.date": formattedDate },
-            { "exerciseEntry.exercise": exerciseId },
+            { "dateEntry.date": date },
+            { "exerciseEntry.exercise": id },
           ],
         }
       );
 
       return res.status(200).json({ message: "Update successful" });
     }
-
     await Diary.findOneAndUpdate(
       { owner: userId, "days.date": formattedDate },
-      { $push: { "days.$.exercises": { ...req.body.exercises } } },
+      {
+        $push: {
+          "days.$.exercises": {
+            exercise: id,
+            time: req.body.time,
+            burnedCalories,
+          },
+        },
+      },
       { new: true, useFindAndModify: false }
     );
   } else {
-    await createNewDay(req, usersDiary);
+    await createNewDay(req, existingDiary, burnedCalories);
   }
 
-  return res.status(201).json(req.body.exercises);
+  return res.status(201).json({ id, time, burnedCalories });
 };
 
 const addProduct = async (req, res) => {
   const { _id: userId } = req.user;
+  const { id } = req.params;
 
-  console.log(1);
-  const usersDiary = await Diary.findOne({ owner: userId });
   const formattedDate = moment().format("DD.MM.YYYY");
 
-  const existingDay = await Diary.findOne({
+  const existingDiary = await Diary.findOne({
     owner: userId,
     "days.date": formattedDate,
   });
-  console.log(2);
 
-  if (existingDay) {
-    const productId = req.body.products.product;
-    const existingProductIndex = existingDay.days.findIndex(
+  if (existingDiary) {
+    const existingDayIndex = existingDiary.days.findIndex(
       (entry) => entry.date === formattedDate
     );
-
-    if (existingProductIndex !== -1) {
-      console.log(3);
-      const productIndex = existingDay.days[
-        existingProductIndex
-      ].products.findIndex((product) => product.id === productId);
+    if (existingDayIndex !== -1) {
+      const productIndex = existingDiary.days[
+        existingDayIndex
+      ].products.findIndex(({ product }) => product.toString() === id);
 
       if (productIndex !== -1) {
-        // Update the weight of the existing product
         await Diary.findOneAndUpdate(
           { owner: userId, "days.date": formattedDate },
           {
             $inc: {
-              [`days.${existingProductIndex}.products.${productIndex}.weight`]:
-                req.body.products.weight,
+              [`days.${existingDayIndex}.products.${productIndex}.weight`]:
+                req.body.weight,
             },
           },
           { new: true, useFindAndModify: false }
@@ -96,25 +103,23 @@ const addProduct = async (req, res) => {
 
         return res.status(200).json({ message: "Update successful" });
       }
-      console.log(4);
-      // Add a new product if the product ID doesn't exist
       await Diary.findOneAndUpdate(
         { owner: userId, "days.date": formattedDate },
         {
           $push: {
-            ["days." + existingProductIndex + ".products"]: {
-              ...req.body.products,
+            ["days." + existingDayIndex + ".products"]: {
+              product: id,
+              ...req.body,
             },
           },
         },
         { new: true, useFindAndModify: false }
       );
-      console.log(5);
     }
   } else {
     await createNewDay(req, usersDiary);
   }
-  return res.status(201).json({ ...req.body });
+  return res.status(201).json({ product: id, ...req.body });
 };
 
 const getInfoAboutDay = async (req, res) => {
@@ -126,24 +131,24 @@ const getInfoAboutDay = async (req, res) => {
     { "days.$": 1 }
   ).populate();
 
-  if (!day) return res.status(404).json({ message: "Day is empty" });
+  if (!day) return res.status(200).json({ message: "Day is empty" });
   return res.status(200).json(day);
 };
 
 const deleteExerciseById = async (req, res) => {
   const { _id: userId } = req.user;
-  const itemId = req.body.id;
-  const dateToDelete = req.body.date;
+  const { id } = req.params;
+  const { date } = req.body;
 
   const updatedDiary = await Diary.findOneAndUpdate(
     {
       owner: userId,
-      "days.date": dateToDelete,
-      "days.exercises.exercise": itemId,
+      "days.date": date,
+      "days.exercises.exercise": id,
     },
     {
       $pull: {
-        "days.$.exercises": { exercise: itemId },
+        "days.$.exercises": { exercise: id },
       },
     }
   );
@@ -158,18 +163,18 @@ const deleteExerciseById = async (req, res) => {
 
 const deleteProductById = async (req, res) => {
   const { _id: userId } = req.user;
-  const itemId = req.body.id;
-  const dateToDelete = req.body.date;
+  const { id } = req.params;
+  const { date } = req.body;
 
   const updatedDiary = await Diary.findOneAndUpdate(
     {
       owner: userId,
-      "days.date": dateToDelete,
-      "days.products.product": itemId,
+      "days.date": date,
+      "days.products.product": id,
     },
     {
       $pull: {
-        "days.$.products": { product: itemId },
+        "days.$.products": { product: id },
       },
     }
   );

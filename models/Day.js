@@ -9,18 +9,17 @@ const dateSchema = Joi.object({
 });
 
 const addExerciseSchema = Joi.object({
-  date: Joi.string(),
-  exercises: Joi.object({
-    time: Joi.number().required(),
-  }),
+  // date: Joi.string(),
+  // exercises: Joi.object({
+  time: Joi.number().required(),
+  id: Schema.Types.ObjectId,
+  // }),
 });
 
 const addProductSchema = Joi.object({
   date: Joi.string(),
-  products: Joi.object({
-    product: Joi.string().length(24).required(),
-    weight: Joi.number().required(),
-  }),
+
+  weight: Joi.number().required(),
 });
 
 const deleteSchema = Joi.object({

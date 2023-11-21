@@ -7,18 +7,18 @@ const userSchema = new Schema(
   {
     name: {
       type: String,
-      require: true,
+      required: true,
     },
     email: {
       type: String,
       match: emailRegexp,
       unique: true,
-      require: true,
+      required: true,
     },
     password: {
       type: String,
       minlength: 6,
-      require: true,
+      required: true,
     },
     avatarURL: {
       type: String,
