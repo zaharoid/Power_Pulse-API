@@ -1,4 +1,3 @@
-import { HttpErr } from "../helpers/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
 import Product from "../models/Product.js";
 
@@ -18,27 +17,52 @@ const getAllCategoryProducts = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
+  let initialArray;
+  let recommendedArray = [];
+  let notRecommendedArray = [];
+
   const { keyWord, blood } = req.query;
 
-  console.log(blood);
+  if (keyWord && !blood) {
+    const result = await Products.find({
+      title: { $regex: keyWord, $options: "i" },
+    });
+    return res.status(200).json(result);
+  }
+  if (!keyWord && !blood) {
+    const result = await Products.find();
+    return res.status(200).json(result);
+  }
 
-  if (keyWord) {
-    const result = await Product.find({
+  if (!keyWord && blood) {
+    initialArray = await Products.find();
+    initialArray.forEach((product) => {
+      product.groupBloodNotAllowed[blood] === true
+        ? notRecommendedArray.push(product)
+        : recommendedArray.push(product);
+    });
+
+    return res.status(200).json({
+      notRecommendedArray,
+      recommendedArray,
+    });
+  }
+
+  if (keyWord && blood) {
+    initialArray = await Products.find({
       title: { $regex: keyWord, $options: "i" },
     });
 
-    res.json(result);
+    initialArray.forEach((product) => {
+      product.groupBloodNotAllowed[blood] === true
+        ? notRecommendedArray.push(product)
+        : recommendedArray.push(product);
+    });
+    return res.status(200).json({
+      recommendedArray,
+      notRecommendedArray,
+    });
   }
-
-  if (!blood) {
-    throw HttpErr(400, "User's data doesn't exist");
-  }
-  const result = await Product.find({
-    // "groupBloodNotAllowed.blood",
-    // [1]: false,
-  });
-
-  res.json(result);
 };
 
 export default {
