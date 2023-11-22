@@ -66,6 +66,13 @@ export const userSigninSchema = Joi.object({
   }),
 });
 
+export const userEmailValidation = Joi.object({
+  email: Joi.string().pattern(emailRegexp).required().messages({
+    "any.required": 'Missing required "email" field',
+    "string.pattern.base": emailPatternMessage,
+  }),
+});
+
 export const userUpdateSchema = Joi.object({
   name: Joi.string(),
 });

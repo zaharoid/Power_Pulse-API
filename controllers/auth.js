@@ -5,7 +5,6 @@ import Diary from "../models/Diary.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import gravatar from "gravatar";
 import fs from "fs/promises";
 import { nanoid } from "nanoid";
 import UserData from "../models/userData.js";
@@ -21,13 +20,11 @@ const signup = async (req, res) => {
     throw HttpErr(409, `${email} already in use`);
   }
   const hashPassword = await bcrypt.hash(password, 10);
-  console.log(1);
   const avatarURL = await cloudinary.url("avatars/avatar", {
     width: 250,
     height: 250,
     crop: "fill",
   });
-  console.log(2);
   const verificationCode = nanoid();
   const newUser = await User.create({
     ...req.body,
@@ -36,12 +33,12 @@ const signup = async (req, res) => {
     verificationCode,
   });
 
-  const verifyEmail = {
+  const emailParams = {
     to: email,
     subject: "Verify email",
     html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${verificationCode}"> Click verify email</a>`,
   };
-  await sendEmail(verifyEmail);
+  await sendEmail(emailParams);
 
   await Diary.create({ owner: newUser._id });
 
@@ -56,24 +53,11 @@ const signup = async (req, res) => {
     user: {
       email: newUser.email,
       name: newUser.name,
+      verify: newUser.verify,
+      createdAt: newUser.createdAt,
       avatarURL,
     },
     token,
-  });
-};
-
-const verifyEmail = async (req, res) => {
-  const { verificationCode } = req.params;
-  const user = await User.findOne({ verificationCode });
-  if (!user) {
-    throw HttpErr(401, "Email not found");
-  }
-  await User.findByIdAndUpdate(user._id, {
-    verify: true,
-    verificationCode: "",
-  });
-  res.json({
-    message: "Email verify success",
   });
 };
 
@@ -110,13 +94,15 @@ const signin = async (req, res) => {
     userData: {
       name: user.name,
       email: user.email,
+      createdAt: user.createdAt,
+      avatar: user.avatarURL,
     },
     token,
     userInfo,
   });
 };
 const getCurrent = async (req, res) => {
-  const { email, name, avatarURL, _id: owner } = req.user;
+  const { email, name, avatarURL, _id: owner, createdAt } = req.user;
 
   let userInfo;
 
@@ -131,6 +117,7 @@ const getCurrent = async (req, res) => {
       name,
       email,
       avatarURL,
+      createdAt,
     },
 
     userInfo,
@@ -174,6 +161,44 @@ const addAvatar = async (req, res) => {
     avatarURL,
   });
 };
+const verifyEmail = async (req, res) => {
+  const { verificationCode } = req.params;
+  const user = await User.findOne({ verificationCode });
+  if (!user) {
+    throw HttpErr(401, "Email not found");
+  }
+  await User.findByIdAndUpdate(user._id, {
+    verify: true,
+    verificationCode: "",
+  });
+  res.json({
+    message: "Email verify success",
+  });
+};
+
+const resendVerify = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw HttpErr(404, "User not found");
+  }
+
+  if (user.verify) {
+    throw HttpErr(400, "Verification has already been passed");
+  }
+
+  const emailParams = {
+    to: email,
+    subject: "Verify email",
+    html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${user.verificationCode}"> Click verify email</a>`,
+  };
+
+  await sendEmail(emailParams);
+
+  res.json({ message: "Verification email sent" });
+};
 
 export default {
   signup: ctrlWrapper(signup),
@@ -183,4 +208,5 @@ export default {
   updateUserInfo: ctrlWrapper(updateUserInfo),
   addAvatar: ctrlWrapper(addAvatar),
   verifyEmail: ctrlWrapper(verifyEmail),
+  resendVerify: ctrlWrapper(resendVerify),
 };

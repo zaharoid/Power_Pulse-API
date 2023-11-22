@@ -20,6 +20,11 @@ const authenticate = async (req, res, next) => {
     if (!user || !user.token) {
       throw HttpErr(401);
     }
+
+    if (!user.verify) {
+      throw HttpErr(401, "Email not verify");
+    }
+
     req.user = user;
     next();
   } catch (error) {

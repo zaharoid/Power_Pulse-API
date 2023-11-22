@@ -11,10 +11,15 @@ import {
 
 import { validateBody } from "../../decorators/index.js";
 
-import { userSignupSchema, userSigninSchema } from "../../models/User.js";
+import {
+  userSignupSchema,
+  userSigninSchema,
+  userEmailValidation,
+} from "../../models/User.js";
 
 const userSignupValidate = validateBody(userSignupSchema);
 const userSigninValidate = validateBody(userSigninSchema);
+const userEmailValidate = validateBody(userEmailValidation);
 
 const authRouter = express.Router();
 
@@ -26,6 +31,9 @@ authRouter.post(
   authController.signup
 );
 authRouter.get("/verify/:verificationCode", authController.verifyEmail);
+
+authRouter.post("/verify", userEmailValidate, authController.resendVerify);
+
 authRouter.post(
   "/signin",
   isEmptyBody,
