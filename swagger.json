@@ -146,29 +146,24 @@
       "patch": {
         "tags": ["Auth"],
         "summary": "Updates user`s avatar",
-        
+
         "parameters": [],
-         "requestBody":{
-        "content":{
-"multipart/form-data":{
-  "schema":{
-"type": "object",
-          "properties":{
-"avatar":{
-"type": "file",
-              "format": "base64"
-}
-              
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "type": "file",
+                    "format": "base64"
+                  }
+                }
+              }
+            }
           }
-            
-  }
-          
-}
-        
-        }
-      
-         },
-    
+        },
+
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
@@ -188,28 +183,28 @@
       }
     },
     "/user": {
-      "get": {
+      "post": {
         "tags": ["User"],
-        "summary": "Get user parameters",
+        "summary": "Create user parameters",
         "parameters": [],
         "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserParametersInfoRequired"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "Successful operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "dailyCalories": {
-                      "type": "number",
-                      "example": 4213
-                    },
-                    "dailyExerciseTime": {
-                      "type": "number",
-                      "example": 110
-                    }
-                  }
+                  "$ref": "#/components/schemas/UserParametersInfo"
                 }
               }
             }
@@ -217,8 +212,8 @@
           "401": {
             "description": "User unauthorized"
           },
-           "400": {
-            "description": "Calculations is empty"
+          "400": {
+            "description": "User's data already exist."
           }
         }
       },
@@ -255,40 +250,6 @@
             "description": "Calculations is empty"
           }
         }
-      },
-      "post": {
-        "tags": ["User"],
-        "summary": "Create user parameters",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserParametersInfoRequired"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserParametersInfo"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthorized"
-          },
-          "400": {
-            "description": "User's data already exist."
-          }
-        }
       }
     },
     "/user/info": {
@@ -314,13 +275,13 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-        "properties": {
-          "name": { "type": "string", "example": "Changed Username" },
-          "email": {
-            "type": "string",
-            "example": "ExampleEmail@mail.com"
-          }
-        }
+                  "properties": {
+                    "name": { "type": "string", "example": "Changed Username" },
+                    "email": {
+                      "type": "string",
+                      "example": "ExampleEmail@mail.com"
+                    }
+                  }
                 }
               }
             }
@@ -341,7 +302,7 @@
             "name": "keyWord",
             "required": false
           },
-           {
+          {
             "in": "query",
             "name": "blood",
             "required": false
@@ -354,21 +315,21 @@
             "content": {
               "application/json": {
                 "schema": {
-                   "type": "object",
-                   "properties":{
-                      "notRecommendedProducts":{
-                        "type": "array",
-                        "items": {
-                          "$ref": "#/components/schemas/Product"
-                        }
-                      },
-                      "recommendedProducts":{
-                        "type": "array",
-                        "items": {
-                          "$ref": "#/components/schemas/Product"
-                        }
+                  "type": "object",
+                  "properties": {
+                    "notRecommendedProducts": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Product"
                       }
-                   }
+                    },
+                    "recommendedProducts": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Product"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -458,14 +419,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "type":"object",
-                "properties":{
-                  "date":{
-                    "type":"string",
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
                     "example": "20.02.2023"
                   },
-                  "time":{
-                    "type":"number",
+                  "time": {
+                    "type": "number",
                     "example": 10
                   }
                 }
@@ -509,10 +470,10 @@
           "content": {
             "application/json": {
               "schema": {
-                "type":"object",
-                "properties":{
-                  "date":{
-                    "type":"string",
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
                     "example": "20.02.2023"
                   }
                 }
@@ -551,14 +512,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "type":"object",
-                "properties":{
-                  "date":{
-                    "type":"string",
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
                     "example": "20.02.2023"
                   },
-                  "weight":{
-                    "type":"number",
+                  "weight": {
+                    "type": "number",
                     "example": 10
                   }
                 }
@@ -602,10 +563,10 @@
           "content": {
             "application/json": {
               "schema": {
-                "type":"object",
-                "properties":{
-                  "date":{
-                    "type":"string",
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
                     "example": "20.02.2023"
                   }
                 }
@@ -822,6 +783,14 @@
           "levelActivity": {
             "type": "number",
             "enum": [1, 2, 3, 4, 5]
+          },
+          "BMR": {
+            "type": "number",
+            "example": 4573
+          },
+          "dailyExerciseTime": {
+            "type": "number",
+            "example": 110
           }
         }
       },
@@ -834,7 +803,9 @@
           "birthday",
           "blood",
           "sex",
-          "levelActivity"
+          "levelActivity",
+          "BMR",
+          "dailyExerciseTime"
         ],
         "properties": {
           "height": {
@@ -864,6 +835,14 @@
           "levelActivity": {
             "type": "number",
             "enum": [1, 2, 3, 4, 5]
+          },
+          "BMR": {
+            "type": "number",
+            "example": 4573
+          },
+          "dailyExerciseTime": {
+            "type": "number",
+            "example": 110
           }
         }
       },

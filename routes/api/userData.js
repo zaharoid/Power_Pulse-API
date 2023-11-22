@@ -11,7 +11,6 @@ const userStatSchemaValidate = validateBody(userStatSchema);
 const userStatUpdateSchemaValidate = validateBody(userStatUpdateSchema);
 
 const userDataRouter = express.Router();
-userDataRouter.get("/", authenticate, userDataController.calculateCalories);
 userDataRouter.post(
   "/",
   authenticate,
