@@ -3,6 +3,7 @@ import Product from "../models/Product.js";
 
 import path from "path";
 import fs from "fs/promises";
+import HttpErr from "../helpers/HttpErr.js";
 
 const productsCategoryPath = path.resolve(
   "products",
@@ -23,19 +24,23 @@ const getAllProducts = async (req, res) => {
 
   const { keyWord, blood } = req.query;
 
+  if (blood && 0 < blood > 5) {
+    throw HttpErr(400);
+  }
+
   if (keyWord && !blood) {
-    const result = await Products.find({
+    const result = await Product.find({
       title: { $regex: keyWord, $options: "i" },
     });
     return res.status(200).json(result);
   }
   if (!keyWord && !blood) {
-    const result = await Products.find();
+    const result = await Product.find();
     return res.status(200).json(result);
   }
 
   if (!keyWord && blood) {
-    initialArray = await Products.find();
+    initialArray = await Product.find();
     initialArray.forEach((product) => {
       product.groupBloodNotAllowed[blood] === true
         ? notRecommendedArray.push(product)
@@ -49,7 +54,7 @@ const getAllProducts = async (req, res) => {
   }
 
   if (keyWord && blood) {
-    initialArray = await Products.find({
+    initialArray = await Product.find({
       title: { $regex: keyWord, $options: "i" },
     });
 

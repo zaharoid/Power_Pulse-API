@@ -1,7 +1,6 @@
 import { Schema, model } from "mongoose";
 import Joi from "joi";
 import { handleSaveError, runValidatorsAtUpdate } from "./hooks.js";
-import moment from "moment";
 const UserCalculates = new Schema(
   {
     height: {
@@ -71,7 +70,7 @@ export const userStatSchema = Joi.object({
     .custom((value, helpers) => {
       const age = new Date().getFullYear() - new Date(value).getFullYear();
       if (age < 18) {
-        return helpers.message("Користувач повинен бути старше 18 років");
+        return helpers.message("Must be older than 18 years");
       }
       return value;
     }),
@@ -90,7 +89,7 @@ export const userStatUpdateSchema = Joi.object({
     .custom((value, helpers) => {
       const age = new Date().getFullYear() - new Date(value).getFullYear();
       if (age < 18) {
-        return helpers.message("Користувач повинен бути старше 18 років");
+        return helpers.message("Must be older than 18 years");
       }
       return value;
     }),

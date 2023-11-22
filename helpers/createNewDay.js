@@ -1,6 +1,4 @@
 import Diary from "../models/Diary.js";
-import Exercise from "../models/Exercise.js";
-import Product from "../models/Product.js";
 
 const createNewDay = async (
   req,

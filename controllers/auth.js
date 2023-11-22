@@ -8,7 +8,6 @@ import dotenv from "dotenv";
 import gravatar from "gravatar";
 import fs from "fs/promises";
 import { nanoid } from "nanoid";
-import { send } from "process";
 import UserData from "../models/userData.js";
 
 

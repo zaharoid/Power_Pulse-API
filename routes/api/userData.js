@@ -1,7 +1,6 @@
 import express from "express";
 import { authenticate, isEmptyBody } from "../../middlewares/index.js";
 import userDataController from "../../controllers/userData.js";
-import authRouter from "./auth.js";
 import authController from "../../controllers/auth.js";
 import { userStatSchema, userStatUpdateSchema } from "../../models/userData.js";
 import { userUpdateSchema } from "../../models/User.js";
