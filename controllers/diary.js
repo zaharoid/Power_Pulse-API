@@ -70,7 +70,7 @@ const addExercise = async (req, res) => {
     await createNewDay(req, existingDiary, burnedCalories);
   }
 
-  const exercise = await Exercise.findById(id);
+  const exercise = await Exercise.findById(id, "-time -burnedCalories");
 
   return res.status(201).json({ exercise, time, burnedCalories });
 };
@@ -188,11 +188,11 @@ const deleteExerciseById = async (req, res) => {
   );
   if (!updatedDiary) {
     return res
-      .status(404)
+      .status(400)
       .json({ error: "Item not found on the specified date" });
   }
 
-  return res.status(200).json({ message: "Item deleted successfully" });
+  return res.status(200).json({ message: "Delete successful" });
 };
 
 const deleteProductById = async (req, res) => {
@@ -214,11 +214,11 @@ const deleteProductById = async (req, res) => {
   );
   if (!updatedDiary) {
     return res
-      .status(404)
+      .status(400)
       .json({ error: "Item not found on the specified date" });
   }
 
-  return res.status(200).json({ message: "Item deleted successfully" });
+  return res.status(200).json({ message: "Delete successful" });
 };
 
 export default {

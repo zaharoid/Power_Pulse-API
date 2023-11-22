@@ -146,19 +146,30 @@
       "patch": {
         "tags": ["Auth"],
         "summary": "Updates user`s avatar",
+        
         "parameters": [],
+         "requestBody":{
+        "content":{
+"multipart/form-data":{
+  "schema":{
+"type": "object",
+          "properties":{
+"avatar":{
+"type": "file",
+              "format": "base64"
+}
+              
+          }
+            
+  }
+          
+}
+        
+        }
+      
+         },
+    
         "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "content": {
-            "image/png": {
-              "schema": {
-                "type": "string",
-                "format": "binary"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -176,7 +187,6 @@
         }
       }
     },
-
     "/user": {
       "get": {
         "tags": ["User"],
@@ -281,7 +291,7 @@
         }
       }
     },
-        "/user/info": {
+    "/user/info": {
       "patch": {
         "tags": ["User"],
         "summary": "Updates user`s email or/and name",
@@ -303,7 +313,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserInfo"
+                  "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "Changed Username" },
+          "email": {
+            "type": "string",
+            "example": "ExampleEmail@mail.com"
+          }
+        }
                 }
               }
             }
@@ -314,7 +331,6 @@
         }
       }
     },
-
     "/products": {
       "get": {
         "tags": ["Products"],
@@ -323,6 +339,11 @@
           {
             "in": "query",
             "name": "keyWord",
+            "required": false
+          },
+           {
+            "in": "query",
+            "name": "blood",
             "required": false
           }
         ],
@@ -333,16 +354,30 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Product"
-                  }
+                   "type": "object",
+                   "properties":{
+                      "notRecommendedProducts":{
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Product"
+                        }
+                      },
+                      "recommendedProducts":{
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Product"
+                        }
+                      }
+                   }
                 }
               }
             }
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "404": {
             "description": "Not found"
@@ -376,11 +411,17 @@
         }
       }
     },
-    "/diary/getInfo": {
-      "post": {
+    "/diary/day": {
+      "get": {
         "tags": ["Diary"],
         "summary": "Get day info in diary for user",
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date",
+            "required": true
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
@@ -399,25 +440,185 @@
         }
       }
     },
-    "/diary/addExercise": {
+    "/diary/exercise/{id}": {
       "patch": {
         "tags": ["Diary"],
         "summary": "Add exercise in diary for user",
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
         "security": [{ "Bearer": [] }],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/"
+        "requestBody": {
+          "description": "Date and exercise time for insert exercise",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type":"object",
+                "properties":{
+                  "date":{
+                    "type":"string",
+                    "example": "20.02.2023"
+                  },
+                  "time":{
+                    "type":"number",
+                    "example": 10
                   }
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update successful"
+          },
+          "201": {
+            "description": "Exercise added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Exercise"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Diary"],
+        "summary": "Delete exercise in diary for user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Date for delete exercise",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type":"object",
+                "properties":{
+                  "date":{
+                    "type":"string",
+                    "example": "20.02.2023"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Delete successful"
+          },
+          "400": {
+            "description": "Item not found on the specified date"
+          },
+          "401": {
+            "description": "User unauthorized"
+          }
+        }
+      }
+    },
+    "/diary/product/{id}": {
+      "patch": {
+        "tags": ["Diary"],
+        "summary": "Add product in diary for user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Date and product weight for insert product",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type":"object",
+                "properties":{
+                  "date":{
+                    "type":"string",
+                    "example": "20.02.2023"
+                  },
+                  "weight":{
+                    "type":"number",
+                    "example": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update successful"
+          },
+          "201": {
+            "description": "Product added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Diary"],
+        "summary": "Delete product in diary for user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Date for delete product",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type":"object",
+                "properties":{
+                  "date":{
+                    "type":"string",
+                    "example": "20.02.2023"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Delete successful"
+          },
+          "400": {
+            "description": "Item not found on the specified date"
           },
           "401": {
             "description": "User unauthorized"
@@ -447,29 +648,6 @@
           },
           "401": {
             "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/exercises/details": {
-      "get": {
-        "tags": ["Exercises"],
-        "summary": "Get list of body parts, equipments and muscles",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ExercisesDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "User unauthorized"
           }
         }
       }
@@ -611,11 +789,7 @@
       "UserInfo": {
         "type": "object",
         "properties": {
-          "name": { "type": "string", "example": "Changed Username" },
-          "email": {
-            "type": "string",
-            "example": "changedExampleEmail@mail.com"
-          }
+          "name": { "type": "string", "example": "Changed Username" }
         }
       },
       "UserParametersInfo": {
@@ -816,7 +990,7 @@
             "type": "string",
             "example": "699944fb56a0aaa8eb05555"
           },
-          "data": {
+          "days": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Day"

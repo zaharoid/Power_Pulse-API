@@ -11,7 +11,7 @@ const add = async (req, res) => {
   const userData = await UserData.findOne({ owner });
 
   if (userData) {
-    throw HttpErr(400, "Calculations already exist.");
+    throw HttpErr(400, "User's data already exist");
   }
 
   const result = await UserData.create({ ...req.body, owner });
@@ -22,9 +22,8 @@ const calculateCalories = async (req, res) => {
   const { _id: owner } = req.user;
 
   const calculations = await UserData.find({ owner });
-
-  if (calculations == []) {
-    throw HttpErr(400, "Calculations is empty.");
+  if (!calculations) {
+    throw HttpErr(400, "Calculations is empty");
   }
 
   const {
