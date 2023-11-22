@@ -1,4 +1,3 @@
-import { HttpErr } from "../helpers/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
 import Exercise from "../models/Exercise.js";
 import ExerciseFilter from "../models/ExerciseFilter.js";

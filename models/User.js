@@ -74,7 +74,9 @@ export const userEmailValidation = Joi.object({
 });
 
 export const userUpdateSchema = Joi.object({
-  name: Joi.string(),
+  name: Joi.string().required().messages({
+    "any.required": 'Missing required "name" field',
+  }),
 });
 const User = model("user", userSchema);
 
