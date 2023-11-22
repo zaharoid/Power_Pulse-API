@@ -49,6 +49,14 @@ const UserCalculates = new Schema(
       ref: "user",
       unique: true,
     },
+    BMR: {
+      type: Number,
+      required: true,
+    },
+    dailyExerciseTime: {
+      type: Number,
+      required: true,
+    }
   },
   { versionKey: false }
 );
