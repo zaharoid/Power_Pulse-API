@@ -19,8 +19,8 @@ const getAllCategoryProducts = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   let initialArray;
-  let recommendedArray = [];
-  let notRecommendedArray = [];
+  let recommendedProducts = [];
+  let notRecommendedProducts = [];
 
   const { keyWord, blood } = req.query;
 
@@ -43,13 +43,13 @@ const getAllProducts = async (req, res) => {
     initialArray = await Product.find();
     initialArray.forEach((product) => {
       product.groupBloodNotAllowed[blood] === true
-        ? notRecommendedArray.push(product)
-        : recommendedArray.push(product);
+        ? notRecommendedProducts.push(product)
+        : recommendedProducts.push(product);
     });
 
     return res.status(200).json({
-      notRecommendedArray,
-      recommendedArray,
+      notRecommendedProducts,
+      recommendedProducts,
     });
   }
 
@@ -60,12 +60,12 @@ const getAllProducts = async (req, res) => {
 
     initialArray.forEach((product) => {
       product.groupBloodNotAllowed[blood] === true
-        ? notRecommendedArray.push(product)
-        : recommendedArray.push(product);
+        ? notRecommendedProducts.push(product)
+        : recommendedProducts.push(product);
     });
     return res.status(200).json({
-      recommendedArray,
-      notRecommendedArray,
+      recommendedProducts,
+      notRecommendedProducts,
     });
   }
 };
