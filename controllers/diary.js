@@ -1,5 +1,3 @@
-import moment from "moment";
-
 import Diary from "../models/Diary.js";
 import Product from "../models/Product.js";
 import Exercise from "../models/Exercise.js";
@@ -68,13 +66,12 @@ const addExercise = async (req, res) => {
 
       { new: true, useFindAndModify: false }
     );
-
   } else {
     await createNewDay(req, existingDiary, burnedCalories);
   }
-  
+
   const exercise = await Exercise.findById(id);
-  
+
   return res.status(201).json({ exercise, time, burnedCalories });
 };
 
@@ -146,7 +143,10 @@ const addProduct = async (req, res) => {
   } else {
     await createNewDay(req, existingDiary, burnedCalories, consumedCalories);
   }
-  return res.status(201).json({ product: id, weight });
+
+  return res
+    .status(201)
+    .json({ product: productToAdd, weight, consumedCalories });
 };
 
 const getInfoAboutDay = async (req, res) => {

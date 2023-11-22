@@ -1,5 +1,6 @@
 import Diary from "../models/Diary.js";
 import Exercise from "../models/Exercise.js";
+import Product from "../models/Product.js";
 
 const createNewDay = async (
   req,
@@ -10,9 +11,7 @@ const createNewDay = async (
   const { time, weight, date } = req.body;
   const { id } = req.params;
 
-  const exercise = await Exercise.find;
-
-  const newDay = req.body.time
+  const newDay = time
     ? {
         date,
         exercises: [{ time, exercise: id, burnedCalories }],
@@ -26,7 +25,7 @@ const createNewDay = async (
     usersDiary._id,
     { $push: { days: newDay } },
     { new: true, useFindAndModify: false }
-  ).populate("days.exercises.exercise");
+  );
 };
 
 export default createNewDay;

@@ -1,7 +1,4 @@
-// import { array } from "joi";
 import { Schema, model } from "mongoose";
-// import { exerciseSchema } from "./Exercise.js";
-// import { productSchema } from "./Product.js";
 
 const exerciseSchema = new Schema(
   {
@@ -19,7 +16,7 @@ const exerciseSchema = new Schema(
       required: true,
     },
   },
-  { _id: false }
+  { _id: false, versionKey: false }
 );
 
 const productSchema = new Schema(
@@ -38,7 +35,7 @@ const productSchema = new Schema(
       required: true,
     },
   },
-  { _id: false }
+  { _id: false, versionKey: false }
 );
 
 const daySchema = new Schema(
@@ -50,17 +47,20 @@ const daySchema = new Schema(
     exercises: [exerciseSchema],
     products: [productSchema],
   },
-  { _id: false }
+  { _id: false, versionKey: false }
 );
 
-const diarySchema = new Schema({
-  owner: {
-    type: Schema.Types.ObjectId,
-    ref: "user",
-    required: true,
+const diarySchema = new Schema(
+  {
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+    },
+    days: [daySchema],
   },
-  days: [daySchema],
-});
+  { versionKey: false }
+);
 
 const Diary = model("diary", diarySchema);
 export default Diary;

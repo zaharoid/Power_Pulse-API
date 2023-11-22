@@ -1,6 +1,6 @@
 import { HttpErr } from "../helpers/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
-import Products from "../models/Product.js";
+import Product from "../models/Product.js";
 
 import path from "path";
 import fs from "fs/promises";
@@ -23,7 +23,7 @@ const getAllProducts = async (req, res) => {
   console.log(blood);
 
   if (keyWord) {
-    const result = await Products.find({
+    const result = await Product.find({
       title: { $regex: keyWord, $options: "i" },
     });
 
@@ -33,7 +33,7 @@ const getAllProducts = async (req, res) => {
   if (!blood) {
     throw HttpErr(400, "User's data doesn't exist");
   }
-  const result = await Products.find({
+  const result = await Product.find({
     // "groupBloodNotAllowed.blood",
     // [1]: false,
   });

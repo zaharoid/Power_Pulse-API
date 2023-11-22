@@ -22,7 +22,8 @@ const calculateCalories = async (req, res) => {
   const { _id: owner } = req.user;
 
   const calculations = await UserData.find({ owner });
-  if (!calculations) {
+
+  if (calculations == []) {
     throw HttpErr(400, "Calculations is empty.");
   }
 
