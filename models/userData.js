@@ -1,6 +1,9 @@
 import { Schema, model } from "mongoose";
-import Joi from "joi";
+import DateExtension from "@joi/date";
+import JoiImport from "joi";
+const Joi = JoiImport.extend(DateExtension);
 import { handleSaveError, runValidatorsAtUpdate } from "./hooks.js";
+
 const UserCalculates = new Schema(
   {
     height: {
@@ -56,7 +59,7 @@ const UserCalculates = new Schema(
     dailyExerciseTime: {
       type: Number,
       required: true,
-    }
+    },
   },
   { versionKey: false }
 );
@@ -68,32 +71,51 @@ UserCalculates.pre("findOneAndUpdate", runValidatorsAtUpdate);
 UserCalculates.post("findOneAndUpdate", handleSaveError);
 
 export const userStatSchema = Joi.object({
-  height: Joi.number().min(150).required(),
-  currentWeight: Joi.number().min(35).required(),
-  desiredWeight: Joi.number().min(35).required(),
+  height: Joi.number().min(150).max(300).required().messages({
+    "any.required": 'Missing required "height" field',
+  }),
+  currentWeight: Joi.number().min(35).max(300).required().messages({
+    "any.required": `"currentWeight" is a required field`,
+  }),
+  desiredWeight: Joi.number().min(35).max(300).required().messages({
+    "any.required": 'Missing required "desiredWeight" field',
+  }),
   birthday: Joi.date()
+    .format("YYYY-MM-DD")
     .max("now")
-    .iso()
     .required()
+    .messages({
+      "any.required": 'Missing required "birthday" field',
+    })
     .custom((value, helpers) => {
       const age = new Date().getFullYear() - new Date(value).getFullYear();
       if (age < 18) {
         return helpers.message("Must be older than 18 years");
       }
+
       return value;
+    })
+    .messages({
+      "any.required": 'Missing required "birthday" field',
     }),
-  blood: Joi.number().valid(1, 2, 3, 4).required(),
-  sex: Joi.string().valid("male", "female").required(),
-  levelActivity: Joi.number().valid(1, 2, 3, 4, 5).required(),
+  blood: Joi.number().valid(1, 2, 3, 4).required().messages({
+    "any.required": 'Missing required "blood" field',
+  }),
+  sex: Joi.string().valid("male", "female").required().messages({
+    "any.required": 'Missing required "sex" field',
+  }),
+  levelActivity: Joi.number().valid(1, 2, 3, 4, 5).required().messages({
+    "any.required": 'Missing required "levelActivity" field',
+  }),
 });
 
 export const userStatUpdateSchema = Joi.object({
-  height: Joi.number().min(150),
-  currentWeight: Joi.number().min(35),
-  desiredWeight: Joi.number().min(35),
+  height: Joi.number().min(150).max(300),
+  currentWeight: Joi.number().min(35).max(300),
+  desiredWeight: Joi.number().min(35).max(300),
   birthday: Joi.date()
+    .format("YYYY-MM-DD")
     .max("now")
-    .iso()
     .custom((value, helpers) => {
       const age = new Date().getFullYear() - new Date(value).getFullYear();
       if (age < 18) {

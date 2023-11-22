@@ -10,7 +10,6 @@ import fs from "fs/promises";
 import { nanoid } from "nanoid";
 import UserData from "../models/userData.js";
 
-
 dotenv.config();
 
 const { JWT_SECRET, BASE_URL } = process.env;
@@ -23,20 +22,25 @@ const signup = async (req, res) => {
   }
   const hashPassword = await bcrypt.hash(password, 10);
 
-  const avatarURL = gravatar.url(email);
-  const verificationCode = nanoid()
-
-  const newUser = await User.create({
-    ...req.body,
-    avatarURL: `${avatarURL}?s=250`,
-    password: hashPassword,
-    verificationCode
+  const avatarURL = await cloudinary.url("avatars/avatar", {
+    width: 250,
+    height: 250,
+    crop: "fill",
   });
 
- const verifyEmail = {
-  to: email,subject: "Verify email",
-  html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${verificationCode}"> Click verify email</a>`
- }
+  const verificationCode = nanoid();
+  const newUser = await User.create({
+    ...req.body,
+    avatarURL,
+    password: hashPassword,
+    verificationCode,
+  });
+
+  const verifyEmail = {
+    to: email,
+    subject: "Verify email",
+    html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${verificationCode}"> Click verify email</a>`,
+  };
   await sendEmail(verifyEmail);
 
   await Diary.create({ owner: newUser._id });
@@ -48,34 +52,36 @@ const signup = async (req, res) => {
   const token = await jwt.sign(payload, JWT_SECRET);
 
   await User.findByIdAndUpdate(newUser._id, { token });
-
   res.status(201).json({
     user: {
       email: newUser.email,
       name: newUser.name,
-      avatarURL: `${avatarURL}?s=250`,
+      avatarURL,
     },
     token,
   });
 };
 
-const verifyEmail = async(req, res) =>{
-  const {verificationCode} = req.params;
-  const user = await User.findOne({verificationCode});
-  if(!user){
-    throw HttpErr(401, "Email not found")
+const verifyEmail = async (req, res) => {
+  const { verificationCode } = req.params;
+  const user = await User.findOne({ verificationCode });
+  if (!user) {
+    throw HttpErr(401, "Email not found");
   }
-  await User.findByIdAndUpdate(user._id, {verify: true, verificationCode: ""});
+  await User.findByIdAndUpdate(user._id, {
+    verify: true,
+    verificationCode: "",
+  });
   res.json({
-    message: "Email verify success"
-  })
-}
+    message: "Email verify success",
+  });
+};
 
 const signin = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  if(!user.verify){
-    throw HttpErr(401, "Email not verify")
+  if (!user.verify) {
+    throw HttpErr(401, "Email not verify");
   }
   if (!user) {
     throw HttpErr(401, "Email or password invalid");

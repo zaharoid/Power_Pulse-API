@@ -2,8 +2,8 @@
   "openapi": "3.0.1",
   "info": {
     "version": "1.0.0",
-    "title": "Power-Pulse_Api",
-    "description": "Power-Pulse_API swagger documentation",
+    "title": "Power-Pulse Api",
+    "description": "Power-Pulse API. It is a full-fledged RESTful API linked to an extensive database and multiple routes. ",
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
