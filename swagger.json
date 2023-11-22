@@ -68,6 +68,32 @@
         }
       }
     },
+    "/auth/verify": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User re-verification",
+        "parameters": [],
+        "requestBody": {
+          "description": "User re-verification",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Re-verification"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verification email sent"
+          },
+          "400": {
+            "description": "Verification has already been passed"
+          }
+        }
+      }
+    },
     "/auth/signin": {
       "post": {
         "tags": ["Auth"],
@@ -143,7 +169,7 @@
       }
     },
     "/auth/avatar": {
-      "patch": {
+      "post": {
         "tags": ["Auth"],
         "summary": "Updates user`s avatar",
 
@@ -255,7 +281,7 @@
     "/user/info": {
       "patch": {
         "tags": ["User"],
-        "summary": "Updates user`s email or/and name",
+        "summary": "Updates user`s name",
         "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
@@ -1007,6 +1033,17 @@
           }
         }
       },
+      "Re-verification": {
+        "type": "object",
+        "required": ["email"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "exampleEmail@mail.com"
+          }
+        }
+      },
       "ExerciseFilter": {
         "type": "object",
         "properties": {
@@ -1027,14 +1064,14 @@
             "example": "https://ftp.goit.study/img/power-pulse/filters/back_wzzphw.jpg"
           }
         }
-      }
-    },
+      },
 
-    "securitySchemes": {
-      "Bearer": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
+      "securitySchemes": {
+        "Bearer": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
       }
     }
   }
