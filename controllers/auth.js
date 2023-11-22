@@ -21,13 +21,13 @@ const signup = async (req, res) => {
     throw HttpErr(409, `${email} already in use`);
   }
   const hashPassword = await bcrypt.hash(password, 10);
-
+  console.log(1);
   const avatarURL = await cloudinary.url("avatars/avatar", {
     width: 250,
     height: 250,
     crop: "fill",
   });
-
+  console.log(2);
   const verificationCode = nanoid();
   const newUser = await User.create({
     ...req.body,
