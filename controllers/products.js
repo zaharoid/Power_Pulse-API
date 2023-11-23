@@ -18,6 +18,8 @@ const getAllCategoryProducts = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
+  const { page = 1, limit = 20 } = req.query;
+  const skip = (page - 1) * limit;
   let initialArray;
   let recommendedProducts = [];
   let notRecommendedProducts = [];
@@ -31,16 +33,18 @@ const getAllProducts = async (req, res) => {
   if (keyWord && !blood) {
     const result = await Product.find({
       title: { $regex: keyWord, $options: "i" },
-    });
+    }).limit(limit).skip(skip);
     return res.status(200).json(result);
   }
   if (!keyWord && !blood) {
-    const result = await Product.find();
+    const result = await Product.find().limit(limit).skip(skip);
     return res.status(200).json(result);
   }
 
   if (!keyWord && blood) {
-    initialArray = await Product.find();
+    initialArray = await Product.find({
+      title: { $regex: keyWord, $options: "i" },
+    }).limit(limit).skip(skip);
     initialArray.forEach((product) => {
       product.groupBloodNotAllowed[blood] === true
         ? notRecommendedProducts.push(product)
@@ -50,13 +54,13 @@ const getAllProducts = async (req, res) => {
     return res.status(200).json({
       notRecommendedProducts,
       recommendedProducts,
-    });
+    })
   }
 
   if (keyWord && blood) {
     initialArray = await Product.find({
       title: { $regex: keyWord, $options: "i" },
-    });
+    }).limit(limit).skip(skip);
 
     initialArray.forEach((product) => {
       product.groupBloodNotAllowed[blood] === true
