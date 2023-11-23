@@ -36,7 +36,7 @@ const signup = async (req, res) => {
   const emailParams = {
     to: email,
     subject: "Verify email",
-    html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${verificationCode}"> Click verify email</a>`,
+    html: `<a target="_blank" href="https://adoppp.github.io/react-app-team-4/verify"> Click verify email</a>`,
   };
   await sendEmail(emailParams);
 
@@ -58,6 +58,7 @@ const signup = async (req, res) => {
       avatarURL,
     },
     token,
+    verificationCode,
   });
 };
 
