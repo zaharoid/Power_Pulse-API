@@ -173,7 +173,7 @@ const verifyEmail = async (req, res) => {
     verificationCode: "",
   });
   res.json({
-    message: "Email verify success",
+    verify: user.verify,
   });
 };
 
