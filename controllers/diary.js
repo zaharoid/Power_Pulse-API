@@ -19,7 +19,9 @@ const addExercise = async (req, res) => {
     owner: userId,
   });
 
-  const burnedCalories = ((exerciseToAdd.burnedCalories / 3) * time).toFixed(1);
+  const burnedCalories = ((exerciseToAdd.burnedCalories / 60) * time).toFixed(
+    1
+  );
   const existingDiaryByDay = await Diary.findOne({
     owner: userId,
     "days.date": date,
