@@ -1,31 +1,60 @@
-## GoIT Node.js Course Template Homework
+# Power-Pulse API
 
-Виконайте форк цього репозиторію для виконання домашніх завдань (2-6)
-Форк створить репозиторій на вашому http://github.com
+## Опис проєкту
 
-Додайте ментора до колаборації
+Power-Pulse API - це повноцінний RESTful API, який пов'язаний з обширною базою даних та має кілька маршрутів. Це дозволяє користувачам отримувати доступ до різноманітних функцій, пов'язаних з авторизацією, користувачами, їхніми щоденниками, вправами та продуктами.
 
-Для кожної домашньої роботи створюйте свою гілку.
+## Документація
 
-- hw02
-- hw03
-- hw04
-- hw05
-- hw06
+[Swagger документація](https://powerpulse-171j.onrender.com/api-docs/)
 
-Кожна нова гілка для др повинна робитися з master
+## Технології
 
-Після того, як ви закінчили виконувати домашнє завдання у своїй гілці, необхідно зробити пулл-реквест (PR). Потім додати ментора для рев'ю коду. Тільки після того, як ментор заапрувить PR, ви можете виконати мердж гілки з домашнім завданням у майстер.
+Проєкт побудований на базі наступних технологій:
 
-Уважно читайте коментарі ментора. Виправте зауваження та зробіть коміт у гілці з домашнім завданням. Зміни підтягнуться у PR автоматично після того, як ви відправите коміт з виправленнями на github
-Після виправлення знову додайте ментора на рев'ю коду.
+- **Node.js** для серверної частини
+- **Express.js** для реалізації RESTful API
+- **MongoDB** для зберігання даних
 
-- При здачі домашньої роботи є посилання на PR
-- JS-код чистий та зрозумілий, для форматування використовується Prettier
+<p align="left"> 
+<a href="https://expressjs.com" target="_blank" rel="noreferrer"> 
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/express/express-original-wordmark.svg" alt="express" width="40" height="40"/> </a> 
+<a href="https://git-scm.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" alt="git" width="40" height="40"/> </a> 
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/> </a> 
+<a href="https://www.mongodb.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mongodb/mongodb-original-wordmark.svg" alt="mongodb" width="40" height="40"/> </a> 
+<a href="https://nodejs.org" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" alt="nodejs" width="40" height="40"/> </a> 
+<a href="https://postman.com" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/getpostman/getpostman-icon.svg" alt="postman" width="40" height="40"/> </a> </p>
 
-### Команди:
+## Маршрути API
 
-- `npm start` &mdash; старт сервера в режимі production
-- `npm run start:dev` &mdash; старт сервера в режимі розробки (development)
-- `npm run lint` &mdash; запустити виконання перевірки коду з eslint, необхідно виконувати перед кожним PR та виправляти всі помилки лінтера
-- `npm lint:fix` &mdash; та ж перевірка лінтера, але з автоматичними виправленнями простих помилок
+Проєкт має кілька основних маршрутів, таких як:
+
+- `/auth` - маршрути для авторизації та реєстрації користувачів
+- `/user` - маршрути для управління інформацією користувачів
+- `/diary` - маршрути для роботи з щоденниками користувачів
+- `/products` - маршрути для отримання списку продуктів
+- `/exercises` - маршрути для отримання списку вправ
+
+## Команди
+
+### Інсталяція
+
+```bash
+npm install
+
+Запуск сервера
+
+bash
+
+npm run start:dev
+
+
+```
+
+## Автори
+
+- [@zaharoid ](https://github.com/zaharoid)
+- [@vldslvD ](https://github.com/vldslvD)
+- [@OlehFedorchuk ](https://github.com/OlehFedorchuk)
+- [@B1B0nNer ](https://github.com/B1B0nNer)
+- [@Maryna-Lasitsyna ](https://github.com/Maryna-Lasitsyna)
