@@ -332,6 +332,16 @@
             "in": "query",
             "name": "blood",
             "required": false
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false
           }
         ],
         "security": [{ "Bearer": [] }],
