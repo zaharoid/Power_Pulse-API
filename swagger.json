@@ -325,12 +325,17 @@
         "parameters": [
           {
             "in": "query",
-            "name": "keyWord",
+            "name": "keyword",
             "required": false
           },
           {
             "in": "query",
-            "name": "blood",
+            "name": "category",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "recommend",
             "required": false
           },
           {
@@ -353,13 +358,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "notRecommendedProducts": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Product"
-                      }
-                    },
-                    "recommendedProducts": {
+                    "products": {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/Product"
