@@ -16,6 +16,16 @@ Power-Pulse API - це повноцінний RESTful API, який пов'яз�
 - **Express.js** для реалізації RESTful API
 - **MongoDB** для зберігання даних
 
+та інші використані технології:
+
+- **Cors**
+- **Logger**
+- **bcrypt**
+- **cloudinary**
+- **jimp**
+- **morgan**
+- **multer**
+
 <p align="left"> 
 <a href="https://expressjs.com" target="_blank" rel="noreferrer"> 
 <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/express/express-original-wordmark.svg" alt="express" width="40" height="40"/> </a> 
