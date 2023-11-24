@@ -6,7 +6,7 @@ The Power-Pulse API is a full-fledged RESTful API that is linked to an extensive
 
 ## Documentation.
 
-[Link to fornt-end](https://adoppp.github.io/react-app-team-4/welcome)
+[Link to front-end](https://adoppp.github.io/react-app-team-4/welcome)
 
 [Swagger documentation](https://powerpulse-171j.onrender.com/api-docs/)
 
