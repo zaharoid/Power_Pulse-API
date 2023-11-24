@@ -4,6 +4,7 @@ import Product from "../models/Product.js";
 import path from "path";
 import fs from "fs/promises";
 import HttpErr from "../helpers/HttpErr.js";
+import UserData from "../models/userData.js";
 
 const productsCategoryPath = path.resolve(
   "products",
@@ -18,58 +19,36 @@ const getAllCategoryProducts = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
-  const { page = 1, limit = 20 } = req.query;
+  const  {_id: owner}  = req.user;
+  const { page = 1, limit = 20, keyword = "", category = "", recommend = null } = req.query;
   const skip = (page - 1) * limit;
-  let filterNotRecommended = {};
-  let filterRecommended = {};
-  let recommendedProducts = [];
-  let notRecommendedProducts = [];
-
-  const { keyWord, blood } = req.query;
-
-  if (blood && 0 < blood > 5) {
-    throw HttpErr(400);
+  const { blood } = await UserData.findOne({ owner });
+  let filter = {
+    title: { $regex: keyword, $options: "i" },
+        category: { $regex: category, $options: "i" },
   }
-
-  if (keyWord && !blood) {
-    const result = await Product.find({
-      title: { $regex: keyWord, $options: "i" },
-    }).limit(limit).skip(skip);
-    return res.status(200).json(result);
+  switch (recommend) {
+    case "true":
+      filter = {
+        title: { $regex: keyword, $options: "i" },
+        category: { $regex: category, $options: "i" },
+        ["groupBloodNotAllowed." + blood]: { $eq: false },
+      };
+      break;
+    case "false":
+      filter = {
+        title: { $regex: keyword, $options: "i" },
+        category: { $regex: category, $options: "i" },
+        ["groupBloodNotAllowed." + blood]: { $eq: true },
+      };
+      break;
+    default:
+      break;
   }
-
-  if (!keyWord && !blood) {
-    const result = await Product.find().limit(limit).skip(skip);
-    return res.status(200).json(result);
-  }
-
-  if (!keyWord && blood) {
-    filterNotRecommended["groupBloodNotAllowed." + `${blood}`] = { $eq: true };
-    filterRecommended["groupBloodNotAllowed." + `${blood}`] = { $eq: false };
-    notRecommendedProducts = await Product.find(filterNotRecommended).limit(limit).skip(skip);
-    recommendedProducts = await Product.find(filterRecommended).limit(limit).skip(skip);
+    const products = await Product.find(filter).limit(limit).skip(skip);
     return res.status(200).json({
-      recommendedProducts,
-      notRecommendedProducts,
+      products
     });
-  }
-
-  if (keyWord && blood) {
-    filterNotRecommended = {
-      title: { $regex: keyWord, $options: "i" },
-      ["groupBloodNotAllowed." + blood]: { $eq: true },
-    };
-    filterRecommended = {
-      title: { $regex: keyWord, $options: "i" },
-      ["groupBloodNotAllowed." + blood]: { $eq: false },
-    };
-    notRecommendedProducts = await Product.find(filterNotRecommended).limit(limit).skip(skip);
-    recommendedProducts = await Product.find(filterRecommended).limit(limit).skip(skip);
-    return res.status(200).json({
-      recommendedProducts,
-      notRecommendedProducts,
-    });
-  }
 };
 
 export default {
