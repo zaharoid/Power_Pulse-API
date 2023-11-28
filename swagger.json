@@ -838,9 +838,7 @@
           "birthday",
           "blood",
           "sex",
-          "levelActivity",
-          "BMR",
-          "dailyExerciseTime"
+          "levelActivity"
         ],
         "properties": {
           "height": {
@@ -870,14 +868,6 @@
           "levelActivity": {
             "type": "number",
             "enum": [1, 2, 3, 4, 5]
-          },
-          "BMR": {
-            "type": "number",
-            "example": 4573
-          },
-          "dailyExerciseTime": {
-            "type": "number",
-            "example": 110
           }
         }
       },
